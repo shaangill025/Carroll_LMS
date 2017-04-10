@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVx5ocv7vYEuYY6kRJDj90QAAAAACAAAAAAADZgAAwAAAABAAAAD43ZYl5DNgTKGmNlGVMYQrAAAAAASAAACgAAAAEAAAANn+g6cNzplF9EFimrrIfReAAAAAv2TklzdiKWDq70iNvakppqN9LC3SJ1M8Sp9y55m8rokuJsKlC569W2Eu8Dsmyauj5t0+tgdOy48x7qJIQY4g2a0FntEIhNzn0+os1S1jxImAc0Q4F0DHN1coDCH8fjZ6qrWwtTOa3omYWS/uEMqvr/QgylYJwcgVEf3L5euMx+MUAAAAjla75KSl5XtIwmw8128/wApZKj8=</EncryptedPassword>
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Server=cscsql2.carrollu.edu;Database=CarrollChemistry;User ID=CarrollChemistry;Password=Carroll2016;MultipleActiveResultSets=true</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>

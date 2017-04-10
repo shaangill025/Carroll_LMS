@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVx5ocv7vYEuYY6kRJDj90QAAAAACAAAAAAADZgAAwAAAABAAAAA5Ca/YWXOApwSihYeLnkaTAAAAAASAAACgAAAAEAAAABCmUnPU+sASlAcZag8x+veAAAAApfr6HIju8BrvGkrdks7Z4W/jD8HWR4lB4OjV9+p4uO7h3bhUe0YTPWlJQs+A+MmXxWsmVH9yWirUK/YqWY/nm8lFBhoNC08qLobBSHnNLhenkNd3CDjwmd5Dw5WVuIlhG0UqJySJTvPqL5Y/Lz+yi2S6r4/egVgVAPMrJuFDq9cUAAAA/Qgxccn7UqSRWIfyPO125r7QfpE=</EncryptedPassword>
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Data Source=tcp:limscarrollu.database.windows.net,1433;Initial Catalog=CarrolluLMS_db;User Id=sysadmin17@limscarrollu;Password=20MAma25</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EfMigrations Include="WebApplication2.Data.ApplicationDbContext">
+      <Value>Data Source=tcp:limscarrollu.database.windows.net,1433;Initial Catalog=CarrolluLMS_db;User Id=sysadmin17@limscarrollu;Password=20MAma25</Value>
+    </EfMigrations>
+  </ItemGroup>
+</Project>

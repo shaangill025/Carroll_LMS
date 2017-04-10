@@ -1,0 +1,71 @@
+@model LMS4Carroll.Models.ChemInventory
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="top-buffer"></div>
+<div class="panel panel-primary">
+    <div class="panel-heading panel-head">Create Inventory Item</div>
+    <div class="panel-body">
+        <br />
+        <form asp-action="Create">
+            <div class="form-horizontal">
+                <h4>Chemicals Inventory</h4>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="ChemID" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <select asp-for="ChemID" class="form-control" asp-items="ViewBag.ChemID"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ExpiryDate" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="ExpiryDate" class="form-control" />
+                        <span asp-validation-for="ExpiryDate" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LocationID" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationName"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="OrderID" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <select asp-for="OrderID" class="form-control" asp-items="ViewBag.OrderID"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="QtyLeft" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="QtyLeft" class="form-control" />
+                        <span asp-validation-for="QtyLeft" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="QtyLeftTeXT" class="col-md-2 control-label">Units</label>
+                    <div class="col-md-10">
+                        <input asp-for="QtyLeftTeXT" class="form-control" />
+                        <span asp-validation-for="QtyLeftTeXT" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group" id="createbtn">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                    <div class="col-md-offset-2 col-md-10">
+                        <a asp-action="Index" class="btn btn-danger">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>    
+</div>
+       
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
