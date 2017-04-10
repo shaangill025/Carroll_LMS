@@ -66,6 +66,7 @@ namespace LMS4Carroll
             loggerFactory.AddNLog();
             app.AddNLogWeb();
             LogManager.Configuration.Variables["LogConnectionStrings"] = Configuration.GetConnectionString("NLogDb");
+            LogManager.Configuration.Variables["configDir"] = "C:\\Users\\sgill\\Desktop\\local-repo\\Carroll_LMS";
 
 
             if (env.IsDevelopment())
