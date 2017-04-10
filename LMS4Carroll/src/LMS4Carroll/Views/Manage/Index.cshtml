@@ -16,11 +16,11 @@
                 <dd>
                     @if (Model.HasPassword)
                     {
-                        <a asp-controller="Manage" asp-action="ChangePassword" class="btn btn-primary"><i class="glyphicon glyphicon-lock"></i>Change</a>
+                        <a asp-controller="Manage" asp-action="ChangePassword" class="btn btn-primary"><i class="glyphicon glyphicon-lock"></i>  Change </a>
                     }
                     else
                     {
-                        <a asp-controller="Manage" asp-action="SetPassword" class="btn btn-danger"><i class="glyphicon glyphicon-lock"></i>Create</a>
+                        <a asp-controller="Manage" asp-action="SetPassword" class="btn btn-danger"><i class="glyphicon glyphicon-lock"></i>  Create </a>
                     }
                 </dd>
                 <dt>External Logins:</dt>
@@ -36,14 +36,14 @@
                     @if (Model.PhoneNumber != null)
                     {
                         <br />
-                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-danger"><i class="glyphicon glyphicon-phone-alt"></i>Change</a>
+                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-danger"><i class="glyphicon glyphicon-phone-alt"></i>  Change </a>
                         <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post">
-                            [<button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i>Remove</button>]
+                            [<button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-trash"></i>  Remove </button>]
                         </form>
                     }
                     else
                     {
-                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-danger"><i class="glyphicon glyphicon-phone-alt"></i>Add</a>
+                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-danger"><i class="glyphicon glyphicon-phone-alt"></i>  Add </a>
                     }
                 </dd>
 
