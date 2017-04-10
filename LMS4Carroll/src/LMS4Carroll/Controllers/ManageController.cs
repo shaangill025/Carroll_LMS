@@ -113,7 +113,7 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
         }
 
-        //
+        [Authorize( Roles = "Admin")]
         // POST: /Manage/EnableTwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -131,6 +131,7 @@ namespace LMS4Carroll.Controllers
 
         //
         // POST: /Manage/DisableTwoFactorAuthentication
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DisableTwoFactorAuthentication()
@@ -273,6 +274,7 @@ namespace LMS4Carroll.Controllers
         }
 
         //GET: /Manage/ManageLogins
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ManageLogins(ManageMessageId? message = null)
         {
@@ -298,6 +300,7 @@ namespace LMS4Carroll.Controllers
 
         //
         // POST: /Manage/LinkLogin
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult LinkLogin(string provider)
@@ -310,6 +313,7 @@ namespace LMS4Carroll.Controllers
 
         //
         // GET: /Manage/LinkLoginCallback
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> LinkLoginCallback()
         {

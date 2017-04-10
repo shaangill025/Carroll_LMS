@@ -17,6 +17,10 @@ textarea {
     max-width: 280px;
 }
 
+#accountpanel {
+    max-width: 65%;
+}
+
 #editbtn a {
     margin-top : 5px;
 }
