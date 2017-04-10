@@ -239,6 +239,7 @@
 -r:"C:\Users\sgill\.nuget\packages\System.Xml.XmlDocument\4.0.1\ref\netstandard1.3\System.Xml.XmlDocument.dll"
 -r:"C:\Users\sgill\.nuget\packages\ZXing.Net\0.15.0\lib\netstandard\zxing.dll"
 -resource:"C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\obj\Debug\netcoreapp1.0\LMS4Carrolldotnet-compile.deps.json",LMS4Carroll.deps.json
+"C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\LogFilter.cs"
 "C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Program.cs"
 "C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Startup.cs"
 "C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Code\ModalSize.cs"

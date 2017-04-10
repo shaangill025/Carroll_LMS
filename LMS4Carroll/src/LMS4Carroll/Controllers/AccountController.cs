@@ -15,6 +15,7 @@ using LMS4Carroll.Services;
 namespace LMS4Carroll.Controllers
 {
     [Authorize]
+    [ServiceFilter(typeof(LogFilter))]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -23,7 +24,7 @@ namespace LMS4Carroll.Controllers
 
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
-        private readonly ILogger _logger;
+        private ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -31,14 +32,14 @@ namespace LMS4Carroll.Controllers
             RoleManager<ApplicationRole> roleManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
-            _logger = loggerFactory.CreateLogger<AccountController>();
+            _logger = logger;
         }
 
         //
@@ -47,6 +48,7 @@ namespace LMS4Carroll.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
+            _logger.LogCritical("Attempted login - ActionController");
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }

@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.0/",
-    "signature": "675908ff7d0a46fb5dc4cba241e2829bff7ea28a"
+    "signature": "0a33c03d74d5ed1c03e6b2417ba1ad8b1533d8ae"
   },
   "compilationOptions": {
     "defines": [
@@ -40,6 +40,7 @@
           "System.Spatial": "5.6.4",
           "Google.Apis.Auth": "1.24.1",
           "NLog.Web.AspNetCore": "4.3.1",
+          "NLog.InstallNLogConfig": "2.0.0",
           "NLog.Config": "4.4.5"
         },
         "compile": {
@@ -1467,6 +1468,11 @@
         },
         "compile": {
           "lib/netstandard1.3/NLog.Extensions.Logging.dll": {}
+        }
+      },
+      "NLog.InstallNLogConfig/2.0.0": {
+        "dependencies": {
+          "NLog": "5.0.0-beta05"
         }
       },
       "NLog.Schema/4.4.5": {},
@@ -3150,6 +3156,7 @@
           "System.Spatial": "5.6.4",
           "Google.Apis.Auth": "1.24.1",
           "NLog.Web.AspNetCore": "4.3.1",
+          "NLog.InstallNLogConfig": "2.0.0",
           "NLog.Config": "4.4.5"
         },
         "runtime": {
@@ -4574,6 +4581,11 @@
         },
         "runtime": {
           "lib/netstandard1.3/NLog.Extensions.Logging.dll": {}
+        }
+      },
+      "NLog.InstallNLogConfig/2.0.0": {
+        "dependencies": {
+          "NLog": "5.0.0-beta05"
         }
       },
       "NLog.Schema/4.4.5": {},
@@ -6697,6 +6709,11 @@
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-8RX13/osS2gSHCMSY/dsCXAVHPLA3lHOH/rEkVWDBCDheVPB9AKEzsv73x/7ShVaX8FVo6ZRntk5GHIqYj/dlw=="
+    },
+    "NLog.InstallNLogConfig/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Bfy9dMcH+9Sw3o3AJtzrlN8Pu90HyCxSHZWbP2AaZy8g6DvC+VyPXiRf9g2XUN+RdXdIxb3ybzHhcar7wwwLoQ=="
     },
     "NLog.Schema/4.4.5": {
       "type": "package",

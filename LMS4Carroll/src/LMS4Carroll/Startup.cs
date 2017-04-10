@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +7,11 @@ using Microsoft.Extensions.Logging;
 using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using LMS4Carroll.Services;
-using LMS4Carroll.Configuration;
 using Microsoft.AspNetCore.StaticFiles;
+using NLog.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using NLog.Web;
+using NLog;
 
 namespace LMS4Carroll
 {
@@ -49,8 +47,11 @@ namespace LMS4Carroll
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+ 
             services.AddMvc();
-           
+            services.AddScoped<LogFilter>();
+
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -60,8 +61,12 @@ namespace LMS4Carroll
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
+            loggerFactory.AddNLog();
+            app.AddNLogWeb();
+            LogManager.Configuration.Variables["LogConnectionStrings"] = Configuration.GetConnectionString("NLogDb");
+
 
             if (env.IsDevelopment())
             {
