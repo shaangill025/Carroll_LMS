@@ -15,6 +15,7 @@ namespace LMS4Carroll.Models
         public int LocationID { get; set; }
 
         [Required]
+        [Display(Name = "Building")]
         [StringLength(50, MinimumLength = 3)]
         public string Name { get; set; }
 
