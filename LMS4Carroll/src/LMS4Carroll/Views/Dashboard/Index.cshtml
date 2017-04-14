@@ -1,0 +1,7 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@if (User.IsInRole("Admin")) { 
+    <script type='text/javascript' src='https://us-east-1.online.tableau.com/javascripts/api/viz_v1.js'></script><div class='tableauPlaceholder' style='width: 1004px; height: 862px;'><object class='tableauViz' width='1004' height='862' style='display:none;'><param name='host_url' value='https%3A%2F%2Fus-east-1.online.tableau.com%2F' /> <param name='site_root' value='&#47;t&#47;carrolllms' /><param name='name' value='chemlog&#47;Dashboard1' /><param name='tabs' value='yes' /><param name='toolbar' value='yes' /><param name='showShareOptions' value='true' /></object></div>
+}

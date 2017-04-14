@@ -43,9 +43,10 @@ namespace LMS4Carroll.Controllers
                                        || s.Formula.Contains(chemstring)
                                        || s.FormulaName.Contains(chemstring)
                                        || s.FormulaWeight.Contains(chemstring)
+                                       || s.CAT.Contains(chemstring)
+                                       || s.CAS.Contains(chemstring)
                                        || s.Hazard.Contains(chemstring)
-                                       || s.State.Contains(chemstring)
-                                       || s.Storage.Contains(chemstring));
+                                       || s.State.Contains(chemstring));
                     return View(await chemicals.OrderByDescending(s => s.ChemID).ToListAsync());
                 }
             }
@@ -83,7 +84,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ChemID,CAS,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
+        public async Task<IActionResult> Create([Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
         {
             if (ModelState.IsValid)
             {
@@ -115,7 +116,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ChemID,CAS,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
+        public async Task<IActionResult> Edit(int id, [Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
         {
             if (id != chemical.ChemID)
             {

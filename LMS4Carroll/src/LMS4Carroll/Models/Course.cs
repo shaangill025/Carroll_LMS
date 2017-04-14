@@ -32,8 +32,8 @@ namespace LMS4Carroll.Models
         public string Department { get; set; }
 
         [StringLength(50)]
-        [Display(Name = "Course Instructor")]
-        public string Instructor { get; set; }
+        [Display(Name = "NormalizedStr")]
+        public string NormalizedStr { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Course Leader")]

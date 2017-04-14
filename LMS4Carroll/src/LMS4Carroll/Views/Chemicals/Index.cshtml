@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Chemicals</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Chemical
@@ -35,6 +35,9 @@
                         @Html.DisplayNameFor(model => model.CAS)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(model => model.CAT)
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(model => model.Formula)
                     </th>
                     <th>
@@ -52,10 +55,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.State)
                     </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Storage)
-                    </th>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                     {
                         <th>
                             Actions
@@ -75,6 +75,9 @@
                             @Html.DisplayFor(modelItem => item.CAS)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.CAT)
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.Formula)
                         </td>
                         <td>
@@ -92,10 +95,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.State)
                         </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Storage)
-                        </td>
-                       @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                       @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                        {
                         <td>
                             <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.ChemID" class="btn btn-info">

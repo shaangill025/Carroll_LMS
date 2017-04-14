@@ -22,6 +22,16 @@ namespace LMS4Carroll.Models
         [Display(Name = "Item Type")]
         public string Type { get; set; }
 
+        [Required]
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "CAT Number")]
+        public string CAT { get; set; }
+
+        [Required]
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "S/N Number")]
+        public string SNNumber { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Order Date")]

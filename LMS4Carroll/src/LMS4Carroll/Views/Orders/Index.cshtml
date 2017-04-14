@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Orders</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Order
@@ -28,6 +28,12 @@
                 <tr>
                     <th>
                         @Html.DisplayNameFor(model => model.OrderID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CAT)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SNNumber)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Orderdate)
@@ -57,7 +63,12 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.OrderID)
                         </td>
-
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CAT)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SNNumber)
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Orderdate)
                         </td>
@@ -70,7 +81,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Type)
                         </td>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                         {
                             <td>
                                 <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.OrderID" class="btn btn-info">

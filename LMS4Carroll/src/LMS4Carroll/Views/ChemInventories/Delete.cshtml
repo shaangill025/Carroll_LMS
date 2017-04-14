@@ -14,6 +14,24 @@
             <hr />
             <dl class="dl-horizontal">
                 <dt>
+                    @Html.DisplayNameFor(model => model.BarcodeID)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BarcodeID)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Chemical.FormulaName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Chemical.FormulaName)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Location.StorageCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Location.StorageCode)
+                </dd>
+                <dt>
                     @Html.DisplayNameFor(model => model.ExpiryDate)
                 </dt>
                 <dd>
@@ -26,10 +44,10 @@
                     @Html.DisplayFor(model => model.QtyLeft)
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.QtyLeftTeXT)
+                    @Html.DisplayNameFor(model => model.Units)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.QtyLeftTeXT)
+                    @Html.DisplayFor(model => model.Units)
                 </dd>
             </dl>
 

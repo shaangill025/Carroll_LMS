@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Chemical Inventory</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Inventory
@@ -32,22 +32,19 @@
                             @Html.DisplayNameFor(model => model.BarcodeID)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Chemical.FormulaName)
+                            @Html.DisplayNameFor(model => model.Chemical.CAT)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.ChemID)
+                            @Html.DisplayNameFor(model => model.Chemical.CAS)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Chemical.FormulaName)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.OrderID)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.LocationID)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Location.Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Location.Room)
+                            @Html.DisplayNameFor(model => model.Location.StorageCode)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Chemical.SDS)
@@ -59,9 +56,9 @@
                             @Html.DisplayNameFor(model => model.QtyLeft)
                         </th>
                         <th>
-                            Units
+                            @Html.DisplayNameFor(model => model.Units)
                         </th>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                         {
                             <th>
                                 Actions
@@ -77,22 +74,19 @@
                                 @Html.DisplayFor(modelItem => item.BarcodeID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Chemical.FormulaName)
+                                @Html.DisplayFor(modelItem => item.Chemical.CAT)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.ChemID)
+                                @Html.DisplayFor(modelItem => item.Chemical.CAS)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Chemical.FormulaName)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.OrderID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.LocationID)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Location.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Location.Room)
+                                @Html.DisplayFor(modelItem => item.Location.StorageCode)
                             </td>
                             <td>
                                 <a target="_blank" href="@Html.DisplayFor(modelItem => item.Chemical.SDS)">SDS</a>
@@ -104,9 +98,9 @@
                                 @Html.DisplayFor(modelItem => item.QtyLeft)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.QtyLeftTeXT)
+                                @Html.DisplayFor(modelItem => item.Units)
                             </td>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                             {
                                 <td>
                                     <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.BarcodeID" class="btn btn-info">

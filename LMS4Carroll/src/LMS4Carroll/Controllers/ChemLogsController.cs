@@ -42,7 +42,6 @@ namespace LMS4Carroll.Controllers
                 {
                     logs = logs.Where(s => s.Course.Department.Contains(chemlogstring)
                                        || s.Course.Handler.Contains(chemlogstring)
-                                       || s.Course.Instructor.Contains(chemlogstring)
                                        || s.Course.Name.Contains(chemlogstring)
                                        || s.Course.Number.Contains(chemlogstring)
                                        || s.Course.CourseID.Equals(forID)
@@ -56,14 +55,13 @@ namespace LMS4Carroll.Controllers
                                        || s.ChemInventory.Chemical.FormulaName.Contains(chemlogstring)
                                        || s.ChemInventory.Chemical.Hazard.Contains(chemlogstring)
                                        || s.ChemInventory.Chemical.State.Contains(chemlogstring)
-                                       || s.ChemInventory.Chemical.Storage.Contains(chemlogstring)
                                        || s.ChemInventory.Location.Name.Contains(chemlogstring)
                                        || s.ChemInventory.Location.Room.Contains(chemlogstring)
                                        || s.ChemInventory.Location.NormalizedStr.Contains(chemlogstring)
                                        || s.ChemInventory.BarcodeID.Equals(forID)
                                        || s.ChemInventory.Order.Vendor.Name.Contains(chemlogstring)
-                                       || s.ChemInventory.Order.Vendor.SNNumber.Contains(chemlogstring)
-                                       || s.ChemInventory.Order.Vendor.CAT.Contains(chemlogstring));
+                                       || s.ChemInventory.Order.SNNumber.Contains(chemlogstring)
+                                       || s.ChemInventory.Order.CAT.Contains(chemlogstring));
                     return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
 
                 }

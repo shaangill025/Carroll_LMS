@@ -16,22 +16,12 @@ namespace LMS4Carroll.Models
 
         [Required]
         [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "Vendor Name")]
+        [Display(Name = "Manufacturer Name")]
         public string Name { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 3)]
         public string Address { get; set; }
-
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "CAT Number")]
-        public string CAT { get; set; }
-
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "S/N Number")]
-        public string SNNumber { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 3)]

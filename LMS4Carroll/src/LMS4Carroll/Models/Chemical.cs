@@ -15,12 +15,12 @@ namespace LMS4Carroll.Models
         public int ChemID { get; set; }
 
         [StringLength(50)]
-        [Display(Name = "CAS Number")]
-        public string CAS { get; set; }
+        [Display(Name = "CAT Number")]
+        public string CAT { get; set; }
 
         [StringLength(50)]
-        [Display(Name = "Storage Code")]
-        public string Storage { get; set; }
+        [Display(Name = "CAS Number")]
+        public string CAS { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Formuala Name")]

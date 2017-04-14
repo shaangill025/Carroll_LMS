@@ -12,10 +12,10 @@
         <div>
             <dl class="dl-horizontal">
                 <dt>
-                    @Html.DisplayNameFor(model => model.Department)
+                    @Html.DisplayNameFor(model => model.NormalizedStr)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Department)
+                    @Html.DisplayFor(model => model.NormalizedStr)
                 </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.Handler)
@@ -24,22 +24,16 @@
                     @Html.DisplayFor(model => model.Handler)
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.Instructor)
+                    @Html.DisplayNameFor(model => model.Location.NormalizedStr)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Instructor)
+                    @Html.DisplayFor(model => model.Location.NormalizedStr)
                 </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.Name)
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Name)
-                </dd>
-                <dt>
-                    @Html.DisplayNameFor(model => model.Number)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Number)
                 </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.LocationID)

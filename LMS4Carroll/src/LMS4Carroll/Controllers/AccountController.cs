@@ -129,7 +129,7 @@ namespace LMS4Carroll.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                       $"Please confirm your account by clicking the following link: \n'{callbackUrl}'");
+                       $"Please confirm your account by clicking the following link: \n{callbackUrl}");
                     // Comment out following line to prevent a new user automatically logged on.
                     // await _signInManager.SignInAsync(user, isPersistent: false);
                     await _userManager.AddToRoleAsync(user,"Student");

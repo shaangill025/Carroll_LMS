@@ -41,7 +41,7 @@ namespace LMS4Carroll.Controllers
                 {
                     courses = courses.Where(s => s.Department.Contains(coursestring)
                                        || s.Handler.Contains(coursestring)
-                                       || s.Instructor.Contains(coursestring)
+                                       || s.NormalizedStr.Contains(coursestring)
                                        || s.Location.Name.Contains(coursestring)
                                        || s.Location.Room.Contains(coursestring)
                                        || s.Location.NormalizedStr.Contains(coursestring)
@@ -86,14 +86,14 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string deptstring,string handlerstring,string instructorstring,
+        public async Task<IActionResult> Create(string deptstring,string handlerstring,
             string namestring, string numberstring, int locationinput)
         {
             //[Bind("CourseID,Department,Handler,Instructor,Name,Number")] Course course
             ViewData["Location"] = locationinput;
             ViewData["Name"] = namestring;
             ViewData["Number"] = numberstring;
-            ViewData["Instructor"] = instructorstring;
+            //ViewData["Instructor"] = instructorstring;
             ViewData["Handler"] = handlerstring;
             ViewData["Department"] = deptstring;
             Course course = new Course();
@@ -101,10 +101,10 @@ namespace LMS4Carroll.Controllers
             {
                 course.Department = deptstring;
                 course.Handler = handlerstring;
-                course.Instructor = instructorstring;
                 course.Name = namestring;
                 course.Number = numberstring;
                 course.LocationID = locationinput;
+                course.NormalizedStr = deptstring + "-" + numberstring;
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -136,7 +136,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CourseID,Department,Handler,Instructor,Name,Number")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("CourseID,Department,Handler,NormalizedStr,Name,Number")] Course course)
         {
             if (id != course.CourseID)
             {

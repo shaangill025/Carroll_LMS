@@ -35,16 +35,10 @@
                         @Html.DisplayNameFor(model => model.Address)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.CAT)
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.Comments)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.SNNumber)
                     </th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                     {
@@ -66,16 +60,10 @@
                             @Html.DisplayFor(modelItem => item.Address)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CAT)
-                        </td>
-                        <td>
                             @Html.DisplayFor(modelItem => item.Comments)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.SNNumber)
                         </td>
                         @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                         {

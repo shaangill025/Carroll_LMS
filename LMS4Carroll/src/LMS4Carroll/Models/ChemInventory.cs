@@ -28,7 +28,7 @@ namespace LMS4Carroll.Models
 
         [StringLength(50)]
         [Display(Name = "Units")]
-        public string QtyLeftTeXT { get; set; }
+        public string Units { get; set; }
 
         [Display(Name = "Qty Left")]
         public float QtyLeft { get; set; }

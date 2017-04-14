@@ -8,8 +8,8 @@ using LMS4Carroll.Data;
 namespace LMS4Carroll.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170409210741_firstdeviter")]
-    partial class firstdeviter
+    [Migration("20170414011947_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -106,18 +106,22 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("BioEquipmentID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AttributeName")
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<string>("EquipmentModel")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("EquipmentName")
                         .HasAnnotation("MaxLength", 50);
 
+                    b.Property<DateTime>("InspectionDate");
+
+                    b.Property<DateTime>("InstalledDate");
+
                     b.Property<int>("LocationID");
 
                     b.Property<int>("OrderID");
+
+                    b.Property<string>("SerialNumber")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Type")
                         .HasAnnotation("MaxLength", 50);
@@ -199,18 +203,22 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("ChemEquipmentID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AttributeName")
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<string>("EquipmentModel")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("EquipmentName")
                         .HasAnnotation("MaxLength", 50);
 
+                    b.Property<DateTime>("InspectionDate");
+
+                    b.Property<DateTime>("InstalledDate");
+
                     b.Property<int>("LocationID");
 
                     b.Property<int>("OrderID");
+
+                    b.Property<string>("SerialNumber")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Type")
                         .HasAnnotation("MaxLength", 50);
@@ -232,6 +240,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("CAS")
                         .HasAnnotation("MaxLength", 50);
 
+                    b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<string>("Formula")
                         .HasAnnotation("MaxLength", 50);
 
@@ -247,9 +258,6 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("SDS");
 
                     b.Property<string>("State")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("Storage")
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("ChemID");
@@ -272,7 +280,7 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<float>("QtyLeft");
 
-                    b.Property<string>("QtyLeftTeXT")
+                    b.Property<string>("Units")
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("BarcodeID");
@@ -320,12 +328,12 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("Handler")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("Instructor")
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<int>("LocationID");
 
                     b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("NormalizedStr")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Number")
@@ -387,6 +395,10 @@ namespace LMS4Carroll.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
+                    b.Property<string>("StorageCode")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
@@ -401,9 +413,17 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("OrderID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CAT")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<DateTime>("Orderdate");
 
                     b.Property<DateTime>("Recievedate");
+
+                    b.Property<string>("SNNumber")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Status")
                         .HasAnnotation("MaxLength", 50);
@@ -429,19 +449,11 @@ namespace LMS4Carroll.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("CAT")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<string>("Comments")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("SNNumber")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 

@@ -6,10 +6,10 @@
 
 <div class="top-buffer"></div>
 <div class="panel panel-primary">
-    <div class="panel-heading panel-head">Biological Equipments</div>
+    <div class="panel-heading panel-head">Biological Equipment</div>
     <div class="panel-body">
         <div class="btn-group">
-        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+        @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
         {
             <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                 <i class="glyphicon glyphicon-plus"></i>  Add Equipment
@@ -32,24 +32,27 @@
                         @Html.DisplayNameFor(model => model.BioEquipmentID)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.AttributeName)
+                        @Html.DisplayNameFor(model => model.EquipmentName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.EquipmentModel)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.EquipmentName)
+                        @Html.DisplayNameFor(model => model.SerialNumber)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Location.Name)
+                        @Html.DisplayNameFor(model => model.Location.NormalizedStr)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Location.Room)
+                        @Html.DisplayNameFor(model => model.InstalledDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.InspectionDate)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Type)
                     </th>
-                @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
                 {
                     <th>
                         Actions
@@ -66,19 +69,22 @@
                             @Html.DisplayFor(modelItem => item.BioEquipmentID)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.AttributeName)
+                            @Html.DisplayFor(modelItem => item.EquipmentName)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.EquipmentModel)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.EquipmentName)
+                            @Html.DisplayFor(modelItem => item.SerialNumber)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Name)
+                            @Html.DisplayFor(modelItem => item.Location.NormalizedStr)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Room)
+                            @Html.DisplayFor(modelItem => item.InstalledDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InspectionDate)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Type)

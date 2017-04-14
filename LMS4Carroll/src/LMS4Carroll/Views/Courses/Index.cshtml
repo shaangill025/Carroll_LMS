@@ -32,25 +32,16 @@
                         @Html.DisplayNameFor(model => model.CourseID)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Department)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Handler)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Instructor)
+                        @Html.DisplayNameFor(model => model.NormalizedStr)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Name)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Number)
+                        @Html.DisplayNameFor(model => model.Handler)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Location.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Location.Room)
+                        @Html.DisplayNameFor(model => model.Location.NormalizedStr)
                     </th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                     {
@@ -69,25 +60,16 @@
                             @Html.DisplayFor(modelItem => item.CourseID)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Department)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Handler)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Instructor)
+                            @Html.DisplayFor(modelItem => item.NormalizedStr)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Number)
+                            @Html.DisplayFor(modelItem => item.Handler)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Location.Room)
+                            @Html.DisplayFor(modelItem => item.Location.NormalizedStr)
                         </td>
                        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                        {

@@ -27,8 +27,18 @@ namespace LMS4Carroll.Models
         public string Type { get; set; }
 
         [StringLength(50)]
-        [Display(Name = "Attribute Name")]
-        public string AttributeName { get; set; }
+        [Display(Name = "S/N")]
+        public string SerialNumber { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Installed Date")]
+        public DateTime InstalledDate { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Next Inspection")]
+        public DateTime InspectionDate { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Equipment Name")]

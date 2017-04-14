@@ -10,7 +10,7 @@
     <div class="panel-heading panel-head">Cage</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+            @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Cage
@@ -50,7 +50,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Species)
                     </th>
-                   @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                   @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
                    {
                     <th>
                         Actions
@@ -84,7 +84,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Species)
                         </td>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
                         {
                             <td>
                                 <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.CageID" class="btn btn-info">

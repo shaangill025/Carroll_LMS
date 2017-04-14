@@ -258,6 +258,7 @@ C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Contro
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\ChemInventoriesController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\ChemLogsController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\CoursesController.cs
+C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\DashboardController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\FileDetailsController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\HomeController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\LocationsController.cs
@@ -267,8 +268,8 @@ C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Contro
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Controllers\VendorsController.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Data\ApplicationDbContext.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Data\DbInitializer.cs
-C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Migrations\20170409210741_firstdeviter.cs
-C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Migrations\20170409210741_firstdeviter.Designer.cs
+C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Migrations\20170414011947_init.cs
+C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Migrations\20170414011947_init.Designer.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Models\ApplicationRole.cs
 C:\Users\sgill\Desktop\local-repo\Carroll_LMS\LMS4Carroll\src\LMS4Carroll\Models\ApplicationRoleListViewModel.cs

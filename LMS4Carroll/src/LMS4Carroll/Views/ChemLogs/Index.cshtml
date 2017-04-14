@@ -9,7 +9,7 @@
             <div class="panel-heading panel-head">Chemicals Log</div>
             <div class="panel-body">
                 <div class="btn-group">
-                    @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                     {
                         <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                             <i class="glyphicon glyphicon-plus"></i>  Add Log Entry
@@ -53,12 +53,12 @@
                                 @Html.DisplayNameFor(model => model.ChemInventory.QtyLeft)
                             </th>
                             <th>
-                                Units
+                                @Html.DisplayNameFor(model => model.ChemInventory.Units)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.DatetimeCreated)
                             </th>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                             {
                                 <th>
                                     Actions
@@ -84,10 +84,10 @@
                                     @Html.DisplayFor(modelItem => item.Course.Number)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.ChemInventory.LocationID)
+                                    @Html.DisplayFor(modelItem => item.ChemInventory.Location.StorageCode)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Course.LocationID)
+                                    @Html.DisplayFor(modelItem => item.Course.Location.StorageCode)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.QtyUsed)
@@ -97,12 +97,12 @@
                                 </td>
                                 <!--QtyLeftText is a fiedl used to track measurement unit -->
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.ChemInventory.QtyLeftTeXT)
+                                    @Html.DisplayFor(modelItem => item.ChemInventory.Units)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.DatetimeCreated)
                                 </td>
-                                @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                                @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                                 {
                                     <td>
                                         <!--

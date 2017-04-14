@@ -15,45 +15,42 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="BarcodeID" />
                 <div class="form-group">
-                    <label asp-for="ChemID" class="control-label col-md-2"></label>
+                    <label asp-for="Chemical.Formula" class="col-md-2 control-label">Chemical</label>
                     <div class="col-md-10">
-                        <select asp-for="ChemID" class="form-control" asp-items="ViewBag.ChemID"></select>
-                        <span asp-validation-for="ChemID" class="text-danger" />
+                        <select asp-for="Chemical.Formula" name="FormulaInput" class="form-control" asp-items="ViewBag.ChemID" value="@ViewData[" Formula"]"></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="ExpiryDate" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-                        <input asp-for="ExpiryDate" class="form-control" />
+                        <input asp-for="ExpiryDate" name="DateInput" class="form-control" value="@ViewData[" ExpiryDate"]" />
                         <span asp-validation-for="ExpiryDate" class="text-danger" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="LocationID" class="control-label col-md-2"></label>
+                    <label asp-for="Location.StorageCode" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-                        <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationName"></select>
-                        <span asp-validation-for="LocationID" class="text-danger" />
+                        <select asp-for="Location.StorageCode" name="StorageInput" class="form-control" asp-items="ViewBag.LocationName" value="@ViewData[" StorageCode"]"></select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="OrderID" class="control-label col-md-2"></label>
+                    <label asp-for="OrderID" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-                        <select asp-for="OrderID" class="form-control" asp-items="ViewBag.OrderID"></select>
-                        <span asp-validation-for="OrderID" class="text-danger" />
+                        <select asp-for="OrderID" name="OrderInput" class="form-control" asp-items="ViewBag.OrderID" value="@ViewData[" Order"]"></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="QtyLeft" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-                        <input asp-for="QtyLeft" class="form-control" />
+                        <input asp-for="QtyLeft" name="QtyInput" class="form-control" value="@ViewData[" Qty"]" />
                         <span asp-validation-for="QtyLeft" class="text-danger" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="QtyLeftTeXT" class="col-md-2 control-label">Units</label>
+                    <label asp-for="Units" class="col-md-2 control-label">Units</label>
                     <div class="col-md-10">
-                        <input asp-for="QtyLeftTeXT" class="form-control" />
-                        <span asp-validation-for="QtyLeftTeXT" class="text-danger" />
+                        <input asp-for="Units" name="UnitString" class="form-control" value="@ViewData[" Unit"]" />
+                        <span asp-validation-for="Units" class="text-danger" />
                     </div>
                 </div>
                 <div id="editbtn" class="form-group">

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler")]
+    [Authorize(Roles = "Admin,Handler,BiologyUser,ChemUser")]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -51,7 +51,7 @@ namespace LMS4Carroll.Controllers
                 }
 
                 int forID;
-                if (Int32.TryParse(orderString, out forID)&&!orderString.Contains("-"))
+                if (Int32.TryParse(orderString, out forID) && !orderString.Contains("-"))
                 {
                     orders = orders.Where(p => p.OrderID.Equals(forID));
                     return View(await orders.OrderByDescending(s => s.OrderID).ToListAsync());
@@ -60,13 +60,15 @@ namespace LMS4Carroll.Controllers
                 {
                     orders = orders.Where(p => p.Recievedate.Equals(dt)
                                 || p.Orderdate.Equals(dt));
-         
+
                     return View(await orders.OrderByDescending(s => s.OrderID).ToListAsync());
                 }
                 else
                 {
                     orders = orders.Where(p => p.Status.Contains(orderString)
                                 || p.OrderID.Equals(forID)
+                                || p.CAT.Contains(orderString)
+                                || p.SNNumber.Contains(orderString)
                                 || p.Status.Contains(orderString)
                                 || p.Type.Contains(orderString)
                                 || p.Vendor.Name.Contains(orderString));
@@ -106,7 +108,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,SNNumber")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -140,7 +142,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,SNNumber")] Order order)
         {
             if (id != order.OrderID)
             {

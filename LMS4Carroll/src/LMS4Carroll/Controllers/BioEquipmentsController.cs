@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler,Student")]
+    [Authorize(Roles = "Admin,Handler,Student,BiologyUser")]
     public class BioEquipmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -42,6 +42,8 @@ namespace LMS4Carroll.Controllers
                     equipments = equipments.Where(s => s.EquipmentName.Contains(bioeqpmtString)
                                        || s.EquipmentModel.Contains(bioeqpmtString)
                                        || s.LocationID.Equals(forID)
+                                       || s.SerialNumber.Contains(bioeqpmtString)
+                                       || s.Location.NormalizedStr.Contains(bioeqpmtString)
                                        || s.OrderID.Equals(forID)
                                        || s.Type.Contains(bioeqpmtString)
                                        || s.Order.VendorID.Equals(forID)
@@ -86,7 +88,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BioEquipmentID,AttributeName,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
+        public async Task<IActionResult> Create([Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
         {
             if (ModelState.IsValid)
             {
@@ -122,7 +124,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BioEquipmentID,AttributeName,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
+        public async Task<IActionResult> Edit(int id, [Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
         {
             if (id != bioEquipment.BioEquipmentID)
             {

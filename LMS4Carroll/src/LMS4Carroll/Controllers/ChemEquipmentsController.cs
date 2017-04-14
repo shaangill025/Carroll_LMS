@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler,Student")]
+    [Authorize(Roles = "Admin,Handler,Student,ChemUser")]
     public class ChemEquipmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -42,6 +42,8 @@ namespace LMS4Carroll.Controllers
                 {
                     equipments = equipments.Where(s => s.EquipmentName.Contains(chemeqpmtString)
                                        || s.EquipmentModel.Contains(chemeqpmtString)
+                                       || s.SerialNumber.Contains(chemeqpmtString)
+                                       || s.Location.NormalizedStr.Contains(chemeqpmtString)
                                        || s.LocationID.Equals(forID)
                                        || s.OrderID.Equals(forID)
                                        || s.Type.Contains(chemeqpmtString)
@@ -87,7 +89,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ChemEquipmentID,AttributeName,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
+        public async Task<IActionResult> Create([Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
         {
             if (ModelState.IsValid)
             {
@@ -123,7 +125,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ChemEquipmentID,AttributeName,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
+        public async Task<IActionResult> Edit(int id, [Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
         {
             if (id != chemEquipment.ChemEquipmentID)
             {

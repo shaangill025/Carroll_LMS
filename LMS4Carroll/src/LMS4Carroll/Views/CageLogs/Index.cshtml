@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Cage Log</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+            @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Log
@@ -64,7 +64,7 @@
                         <th>
                             @Html.DisplayNameFor(model => model.WashComments)
                         </th>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
                         {
                             <th>
                                 Actions
@@ -113,7 +113,7 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.WashComments)
                             </td>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
                     {
                         <td>
                             <!--

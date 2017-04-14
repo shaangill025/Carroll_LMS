@@ -56,13 +56,14 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string addressstring,string namestring,string typestring,string roomstring)
+        public async Task<IActionResult> Create(string addressstring,string namestring,string typestring,string roomstring,string storagestring)
         {
             //[Bind("LocationID,Address,Name,Room,Type")] Location location
             ViewData["Address"] = addressstring;
             ViewData["Name"] = namestring;
             ViewData["Type"] = typestring;
             ViewData["Room"] = roomstring;
+            ViewData["StorageCode"] = storagestring;
             Location location = new Location();
             if (ModelState.IsValid)
             {
@@ -71,6 +72,7 @@ namespace LMS4Carroll.Controllers
                 location.Type = typestring;
                 location.Room = roomstring;
                 location.NormalizedStr = namestring + "-" + roomstring;
+                location.StorageCode = storagestring;
                 _context.Add(location);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -101,7 +103,7 @@ namespace LMS4Carroll.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Roles = "Admin,Handler")]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationID,Address,Name,Room,Type")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("LocationID,Address,Name,StorageCode,Room,Type")] Location location)
         {
             if (id != location.LocationID)
             {

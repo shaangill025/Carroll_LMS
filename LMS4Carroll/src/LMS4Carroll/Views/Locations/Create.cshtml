@@ -13,6 +13,13 @@
             <div class="form-horizontal">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
+                    <label asp-for="StorageCode" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <input asp-for="StorageCode" name="StorageString" class="form-control" value="@ViewData["StorageCode"]" />
+                        <span asp-validation-for="StorageCode" class="text-danger" />
+                    </div>
+                </div>
+                <div class="form-group">
                     <label asp-for="Address" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
                         <input asp-for="Address" name="AddressString" class="form-control" value="@ViewData["Address"]"/>

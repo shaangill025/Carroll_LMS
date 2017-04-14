@@ -29,6 +29,10 @@ namespace LMS4Carroll.Models
 
         [Required]
         [StringLength(50, MinimumLength = 3)]
+        public string StorageCode { get; set; }
+
+        [Required]
+        [StringLength(50, MinimumLength = 3)]
         public string Type { get; set; }
 
         [Required]

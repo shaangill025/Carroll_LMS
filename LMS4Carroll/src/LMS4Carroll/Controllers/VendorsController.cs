@@ -39,9 +39,8 @@ namespace LMS4Carroll.Controllers
                 }
                 else
                 {
-                    vendors = vendors.Where(s => s.CAT.Contains(vendorstring)
-                                       || s.Name.Contains(vendorstring)
-                                       || s.SNNumber.Contains(vendorstring));
+                    vendors = vendors.Where(s => s.Address.Contains(vendorstring)
+                                       || s.Name.Contains(vendorstring));
                     return View(await vendors.OrderByDescending(s => s.VendorID).ToListAsync());
                 }
             }
@@ -79,7 +78,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VendorID,Address,CAT,Comments,Name,SNNumber")] Vendor vendor)
+        public async Task<IActionResult> Create([Bind("VendorID,Address,Comments,Name")] Vendor vendor)
         {
             if (ModelState.IsValid)
             {

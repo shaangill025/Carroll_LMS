@@ -43,9 +43,9 @@ namespace LMS4Carroll.Controllers
                     logs = logs.Where(s => s.Cage.Designation.Contains(cagelogstring)
                                        || s.Cage.Species.Contains(cagelogstring)
                                        || s.Cage.Gender.Contains(cagelogstring)
-                                       || s.Cage.Order.Vendor.SNNumber.Contains(cagelogstring)
+                                       || s.Cage.Order.SNNumber.Contains(cagelogstring)
                                        || s.Cage.Order.Vendor.Name.Contains(cagelogstring)
-                                       || s.Cage.Order.Vendor.CAT.Contains(cagelogstring)
+                                       || s.Cage.Order.CAT.Contains(cagelogstring)
                                        || s.Cage.Location.Name.Contains(cagelogstring)
                                        || s.Cage.Location.NormalizedStr.Contains(cagelogstring)
                                        || s.Cage.Location.Room.Contains(cagelogstring));
