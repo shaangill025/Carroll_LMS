@@ -238,5 +238,19 @@ ModelManifest.xml
 # Paket dependency manager
 .paket/paket.exe
 
+# Protected
+Startup.cs
+appsettings.json
+nlog.config
+bower.json
+.bowerrc
+LMS4Carroll.xproj
+LMS4Carroll.xproj.user
+LogFilter.cs
+bundleconfig.json
+project.json
+project.lock.json
+web.config
+
 # FAKE - F# Make
 .fake/
