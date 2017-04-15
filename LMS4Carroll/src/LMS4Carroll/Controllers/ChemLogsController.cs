@@ -162,36 +162,56 @@ namespace LMS4Carroll.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LogID,Barcode,CourseID")] ChemLog chemLog)
+        public async Task<IActionResult> Edit(int id, int barcodeinput, int courseinput, float qtyusedinput)
         {
-            if (id != chemLog.LogID)
+            ViewData["Barcode"] = barcodeinput;
+            ViewData["Barcode"] = courseinput;
+            ViewData["Qty"] = qtyusedinput;
+            if (_context.ChemInventory.Count(M => M.BarcodeID == barcodeinput) >= 1)
             {
-                return NotFound();
-            }
+                ChemLog chemLog = new ChemLog();
+                ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.BarcodeID == barcodeinput);
+                float tempValue = temp.QtyLeft;
+                temp.QtyLeft = tempValue - qtyusedinput;
+                _context.Entry<ChemInventory>(temp).State = EntityState.Modified;
+                _context.SaveChanges();
+                chemLog.BarcodeID = barcodeinput;
+                chemLog.CourseID = courseinput;
+                chemLog.QtyUsed = qtyusedinput;
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (id != chemLog.LogID)
                 {
-                    _context.Update(chemLog);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ModelState.IsValid)
                 {
-                    if (!ChemLogExists(chemLog.LogID))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(chemLog);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ChemLogExists(chemLog.LogID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction("Index");
                 }
-                return RedirectToAction("Index");
+                ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
+                ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
+                return View(chemLog);
             }
-            ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
-            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
-            return View(chemLog);
+            else
+            {
+                return View("CheckBarcode");
+            }           
         }
 
         // GET: ChemLogs/Delete/5

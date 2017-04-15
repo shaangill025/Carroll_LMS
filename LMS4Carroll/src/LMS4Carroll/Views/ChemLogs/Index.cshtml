@@ -104,11 +104,11 @@
                                 </td>
                                 @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
                                 {
-                                    <td>
-                                        <!--
+                                    <td>    
+                                        <!--                                 
                                         <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.LogID" class="btn btn-info">
                                             <i class="glyphicon glyphicon-pencil"></i>Edit
-                                        </a>-->
+                                        </a>--> 
                                         <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.LogID" class="btn btn-danger">
                                             <i class="glyphicon glyphicon-trash"></i>Delete
                                         </a>
