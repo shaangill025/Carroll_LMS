@@ -40,6 +40,7 @@ namespace LMS4Carroll.Controllers
                 else
                 {
                     vendors = vendors.Where(s => s.Address.Contains(vendorstring)
+                                       || s.SNNumber.Contains(vendorstring)
                                        || s.Name.Contains(vendorstring));
                     return View(await vendors.OrderByDescending(s => s.VendorID).ToListAsync());
                 }
@@ -78,7 +79,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VendorID,Address,Comments,Name")] Vendor vendor)
+        public async Task<IActionResult> Create([Bind("VendorID,SNNumber,Address,Comments,Name")] Vendor vendor)
         {
             if (ModelState.IsValid)
             {
@@ -110,7 +111,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VendorID,Address,CAT,Comments,Name,SNNumber")] Vendor vendor)
+        public async Task<IActionResult> Edit(int id, [Bind("VendorID,SNNumber,Address,CAT,Comments,Name,SNNumber")] Vendor vendor)
         {
             if (id != vendor.VendorID)
             {

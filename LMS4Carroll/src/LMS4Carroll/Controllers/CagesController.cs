@@ -45,7 +45,8 @@ namespace LMS4Carroll.Controllers
                                        || s.Location.Name.Contains(cagestring)
                                        || s.Location.Room.Contains(cagestring)
                                        || s.Location.NormalizedStr.Contains(cagestring)
-                                       || s.Order.SNNumber.Contains(cagestring)
+                                       || s.Order.Invoice.Contains(cagestring)
+                                       || s.Order.PO.Contains(cagestring)
                                        || s.Order.Vendor.Name.Contains(cagestring)
                                        || s.Order.CAT.Contains(cagestring));
                     return View(await cages.OrderByDescending(s => s.CageID).ToListAsync());

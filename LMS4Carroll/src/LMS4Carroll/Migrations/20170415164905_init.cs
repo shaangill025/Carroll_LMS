@@ -101,7 +101,8 @@ namespace LMS4Carroll.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address = table.Column<string>(maxLength: 50, nullable: false),
                     Comments = table.Column<string>(maxLength: 50, nullable: false),
-                    Name = table.Column<string>(maxLength: 50, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
+                    SNNumber = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -214,13 +215,13 @@ namespace LMS4Carroll.Migrations
                 {
                     CourseID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Department = table.Column<string>(maxLength: 50, nullable: true),
+                    Department = table.Column<string>(maxLength: 50, nullable: false),
                     Handler = table.Column<string>(maxLength: 50, nullable: true),
                     LocationID = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 50, nullable: true),
+                    Name = table.Column<string>(maxLength: 50, nullable: false),
                     NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
                     NormalizedStr = table.Column<string>(maxLength: 50, nullable: true),
-                    Number = table.Column<string>(maxLength: 50, nullable: true)
+                    Number = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,10 +240,11 @@ namespace LMS4Carroll.Migrations
                 {
                     OrderID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CAT = table.Column<string>(maxLength: 50, nullable: false),
+                    CAT = table.Column<string>(maxLength: 50, nullable: true),
+                    Invoice = table.Column<string>(maxLength: 50, nullable: false),
                     Orderdate = table.Column<DateTime>(nullable: false),
+                    PO = table.Column<string>(maxLength: 50, nullable: false),
                     Recievedate = table.Column<DateTime>(nullable: false),
-                    SNNumber = table.Column<string>(maxLength: 50, nullable: false),
                     Status = table.Column<string>(maxLength: 50, nullable: true),
                     Type = table.Column<string>(maxLength: 50, nullable: true),
                     VendorID = table.Column<int>(nullable: false)
@@ -397,7 +399,7 @@ namespace LMS4Carroll.Migrations
                     FileDetailID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ContentType = table.Column<string>(nullable: true),
-                    DatetimeCreated = table.Column<DateTime>(nullable: false,defaultValueSql: "GETUTCDATE()"),
+                    DatetimeCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
                     File = table.Column<byte[]>(nullable: false),
                     FileName = table.Column<string>(maxLength: 255, nullable: true),
                     FileType = table.Column<string>(maxLength: 100, nullable: true),

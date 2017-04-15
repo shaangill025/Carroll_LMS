@@ -22,15 +22,19 @@ namespace LMS4Carroll.Models
         [Display(Name = "Item Type")]
         public string Type { get; set; }
 
-        [Required]
         [StringLength(50, MinimumLength = 3)]
         [Display(Name = "CAT Number")]
         public string CAT { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "S/N Number")]
-        public string SNNumber { get; set; }
+        [Display(Name = "Invoice #")]
+        public string Invoice { get; set; }
+
+        [Required]
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "PO #")]
+        public string PO { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -39,7 +43,7 @@ namespace LMS4Carroll.Models
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Recieved Date")]
+        [Display(Name = "Delivery Date")]
         public DateTime Recievedate { get; set; }
 
         [StringLength(50)]

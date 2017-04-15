@@ -32,7 +32,7 @@
                         @Html.DisplayNameFor(model => model.CourseID)
                     </th>
                     <th>
-                        Location
+                        Course
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Name)
@@ -41,7 +41,7 @@
                         @Html.DisplayNameFor(model => model.Handler)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Location.NormalizedStr)
+                        Location
                     </th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                     {

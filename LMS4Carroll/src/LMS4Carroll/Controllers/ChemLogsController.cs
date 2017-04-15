@@ -60,7 +60,8 @@ namespace LMS4Carroll.Controllers
                                        || s.ChemInventory.Location.NormalizedStr.Contains(chemlogstring)
                                        || s.ChemInventory.BarcodeID.Equals(forID)
                                        || s.ChemInventory.Order.Vendor.Name.Contains(chemlogstring)
-                                       || s.ChemInventory.Order.SNNumber.Contains(chemlogstring)
+                                       || s.ChemInventory.Order.Invoice.Contains(chemlogstring)
+                                       || s.ChemInventory.Order.PO.Contains(chemlogstring)
                                        || s.ChemInventory.Order.CAT.Contains(chemlogstring));
                     return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
 

@@ -19,14 +19,17 @@ namespace LMS4Carroll.Models
         public int LocationID { get; set; }
         public virtual Location Location { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Course Name")]
         public string Name { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Course Number")]
         public string Number { get; set; }
 
+        [Required]
         [StringLength(50)]
         [Display(Name = "Course Department")]
         public string Department { get; set; }

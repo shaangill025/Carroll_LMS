@@ -8,7 +8,7 @@ using LMS4Carroll.Data;
 namespace LMS4Carroll.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170415012607_init")]
+    [Migration("20170415164905_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -329,6 +329,7 @@ namespace LMS4Carroll.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Department")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Handler")
@@ -337,6 +338,7 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("LocationID");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("NormalizedLocation")
@@ -346,6 +348,7 @@ namespace LMS4Carroll.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Number")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("CourseID");
@@ -423,16 +426,19 @@ namespace LMS4Carroll.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("Invoice")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<DateTime>("Orderdate");
 
-                    b.Property<DateTime>("Recievedate");
-
-                    b.Property<string>("SNNumber")
+                    b.Property<string>("PO")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("Recievedate");
 
                     b.Property<string>("Status")
                         .HasAnnotation("MaxLength", 50);
@@ -463,6 +469,10 @@ namespace LMS4Carroll.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("SNNumber")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 

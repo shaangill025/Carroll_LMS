@@ -32,6 +32,9 @@
                         @Html.DisplayNameFor(model => model.VendorID)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(model => model.SNNumber)
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(model => model.Address)
                     </th>
                     <th>
@@ -55,6 +58,9 @@
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.VendorID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SNNumber)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Address)

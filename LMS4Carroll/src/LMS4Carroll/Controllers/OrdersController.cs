@@ -68,7 +68,8 @@ namespace LMS4Carroll.Controllers
                     orders = orders.Where(p => p.Status.Contains(orderString)
                                 || p.OrderID.Equals(forID)
                                 || p.CAT.Contains(orderString)
-                                || p.SNNumber.Contains(orderString)
+                                || p.PO.Contains(orderString)
+                                || p.Invoice.Contains(orderString)
                                 || p.Status.Contains(orderString)
                                 || p.Type.Contains(orderString)
                                 || p.Vendor.Name.Contains(orderString));
@@ -108,7 +109,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,SNNumber")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,Invoice,PO")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -133,7 +134,7 @@ namespace LMS4Carroll.Controllers
             {
                 return NotFound();
             }
-            ViewData["VendorID"] = new SelectList(_context.Vendors, "VendorID", "Address", order.VendorID);
+            ViewData["VendorID"] = new SelectList(_context.Vendors, "VendorID", "Name", order.VendorID);
             return View(order);
         }
 
@@ -142,7 +143,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,SNNumber")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,Invoice,PO")] Order order)
         {
             if (id != order.OrderID)
             {
@@ -169,7 +170,7 @@ namespace LMS4Carroll.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            ViewData["VendorID"] = new SelectList(_context.Vendors, "VendorID", "Address", order.VendorID);
+            ViewData["VendorID"] = new SelectList(_context.Vendors, "VendorID", "Name", order.VendorID);
             return View(order);
         }
 

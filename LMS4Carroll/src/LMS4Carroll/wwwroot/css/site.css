@@ -47,7 +47,7 @@ textarea {
     margin-left: 40px;
 }
 
-#createbtn .btn{
+#createbtn .btn {
     width : 100px;
 }
 
@@ -94,11 +94,82 @@ textarea {
     margin-right: 5px;
     padding-right: 5px;
 }
+
+#homeh2 {
+    color:  #F05F40;
+}
+
+.bg-primary {
+    background-color: #F05F40;
+    margin-top: 10px;
+}
+
+.bg-dark {
+    background-color: #222222;
+    color: white;
+    font-weight: 600;
+}
+
+.text-faded {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+section {
+    padding: 30px 0;
+}
+
+aside {
+    padding: 20px 0;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+#features .glyphicon {
+    font-size : 50px;
+}
+
+#contact .glyphicon{
+    font-size : 25px;
+}
    
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-  /* Hide captions */
-  .carousel-caption {
-    display: none
-  }
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+
+    #homeh2 {
+    color:  #F05F40;
+    }
+
+    .bg-primary {
+        background-color: #F05F40;
+        margin-top: 10px;
+    }
+
+    .bg-dark {
+        background-color: #222222;
+        color: white;
+        font-weight: 600;
+    }
+
+    .text-faded {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    section {
+        padding: 30px 0;
+    }
+
+    aside {
+        padding: 20px 0;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
 }
