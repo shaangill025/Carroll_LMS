@@ -35,7 +35,7 @@
                             @Html.DisplayNameFor(model => model.Cage.CageID)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Cage.LocationID)
+                            @Html.DisplayNameFor(model => model.Cage.NormalizedLocation)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Cage.Designation)
@@ -84,7 +84,7 @@
                                 @Html.DisplayFor(modelItem => item.CageID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Cage.LocationID)
+                                @Html.DisplayFor(modelItem => item.Cage.NormalizedLocation)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Cage.Designation)
@@ -136,5 +136,4 @@
             </table>
             </div>
         </div>
-    </div>
 

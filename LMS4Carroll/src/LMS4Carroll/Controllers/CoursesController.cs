@@ -104,7 +104,9 @@ namespace LMS4Carroll.Controllers
                 course.Name = namestring;
                 course.Number = numberstring;
                 course.LocationID = locationinput;
-                course.NormalizedStr = deptstring + "-" + numberstring;
+                course.NormalizedStr = deptstring + "-" + numberstring;               
+                var temp = _context.Locations.First(m => m.LocationID == locationinput);
+                course.NormalizedLocation = temp.NormalizedStr;
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -136,8 +138,25 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CourseID,Department,Handler,NormalizedStr,Name,Number")] Course course)
+        public async Task<IActionResult> Edit(int id, string deptstring, string handlerstring,
+            string namestring, string numberstring, int locationinput)
         {
+            ViewData["Location"] = locationinput;
+            ViewData["Name"] = namestring;
+            ViewData["Number"] = numberstring;
+            //ViewData["Instructor"] = instructorstring;
+            ViewData["Handler"] = handlerstring;
+            ViewData["Department"] = deptstring;
+            Course course = new Course();
+            course.Department = deptstring;
+            course.Handler = handlerstring;
+            course.Name = namestring;
+            course.Number = numberstring;
+            course.LocationID = locationinput;
+            course.NormalizedStr = deptstring + "-" + numberstring;
+            var temp = _context.Locations.First(m => m.LocationID == locationinput);
+            course.NormalizedLocation = temp.NormalizedStr;
+
             if (id != course.CourseID)
             {
                 return NotFound();

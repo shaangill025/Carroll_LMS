@@ -86,10 +86,26 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CageID,DOB,Designation,Gender,LocationID,OrderID,Species")] Cage cage)
+        public async Task<IActionResult> Create(DateTime dobinput,string designationstring,string genderstring,int locationinput,int orderinput,string speciesstring)
         {
+            @ViewData["DOB"] = dobinput;
+            @ViewData["Designation"] = designationstring;
+            @ViewData["Gender"] = genderstring;
+            @ViewData["Location"] = locationinput;
+            @ViewData["Order"] = orderinput;
+            @ViewData["Species"] = speciesstring;
+            Cage cage = new Cage();
+            //[Bind("CageID,DOB,Designation,Gender,LocationID,OrderID,Species")] Cage cage
             if (ModelState.IsValid)
             {
+                var temp = _context.Locations.First(m => m.LocationID == locationinput);
+                cage.DOB = dobinput;
+                cage.Designation = designationstring;
+                cage.Gender = genderstring;
+                cage.LocationID = locationinput;
+                cage.OrderID = orderinput;
+                cage.Species = speciesstring;
+                cage.NormalizedLocation = temp.NormalizedStr;
                 _context.Add(cage);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -124,8 +140,24 @@ namespace LMS4Carroll.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CageID,DOB,Designation,Gender,LocationID,OrderID,Species")] Cage cage)
+        public async Task<IActionResult> Edit(int id, DateTime dobinput, string designationstring, string genderstring, int locationinput, int orderinput, string speciesstring)
         {
+            @ViewData["DOB"] = dobinput;
+            @ViewData["Designation"] = designationstring;
+            @ViewData["Gender"] = genderstring;
+            @ViewData["Location"] = locationinput;
+            @ViewData["Order"] = orderinput;
+            @ViewData["Species"] = speciesstring;
+            Cage cage = new Cage();
+            var temp = _context.Locations.First(m => m.LocationID == locationinput);
+            cage.DOB = dobinput;
+            cage.Designation = designationstring;
+            cage.Gender = genderstring;
+            cage.LocationID = locationinput;
+            cage.OrderID = orderinput;
+            cage.Species = speciesstring;
+            cage.NormalizedLocation = temp.NormalizedStr;
+
             if (id != cage.CageID)
             {
                 return NotFound();

@@ -81,7 +81,7 @@ namespace LMS4Carroll.Controllers
         public IActionResult Create()
         {
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula");
-            ViewData["LocationName"] = new SelectList(_context.Locations.Distinct(), "LocationID", "StorageCode");
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode");
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID");
             return View();
         }
@@ -91,8 +91,11 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int formulainput,DateTime dateinput,int storageinput,int orderinput,float qtyinput,string unitstring)
+        public async Task<IActionResult> Create(int formulainput, DateTime dateinput, int storageinput, int orderinput, float qtyinput, string unitstring)
         {
+            //[Bind("BarcodeID,OrderID,LocationID,ChemID,Units,QtyLeft,ExpiryDate")] ChemInventory chemInventory
+            //int formulainput,DateTime dateinput,int storageinput,int orderinput,float qtyinput,string unitstring
+            
             @ViewData["Formula"] = formulainput;
             @ViewData["ExpiryDate"] = dateinput;
             @ViewData["StorageCode"] = storageinput;
@@ -100,24 +103,28 @@ namespace LMS4Carroll.Controllers
             @ViewData["Qty"] = qtyinput;
             @ViewData["Unit"] = unitstring;
             ChemInventory chemInventory = new ChemInventory();
+            
 
             if (ModelState.IsValid)
             {
                 //var chemID = _context.Chemical.Where(p => p.Formula == FormulaString).Select(p => p.ChemID);
                 //var Chem = _context.Chemical.Where(p => p.Formula == FormulaString);
                 //chemInventory.ChemID = await chemID;
+                
                 chemInventory.ChemID = formulainput;
                 chemInventory.LocationID = storageinput;
                 chemInventory.ExpiryDate = dateinput;
                 chemInventory.OrderID = orderinput;
                 chemInventory.QtyLeft = qtyinput;
                 chemInventory.Units = unitstring;
+                var temp = _context.Locations.First(m => m.LocationID == storageinput);
+                chemInventory.NormalizedLocation = temp.StorageCode;
                 _context.Add(chemInventory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula", chemInventory.ChemID);
-            ViewData["LocationName"] = new SelectList(_context.Locations.Distinct(), "LocationID", "StorageCode", chemInventory.LocationID);
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode", chemInventory.LocationID);
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", chemInventory.OrderID);
             return View(chemInventory);
         }
@@ -136,7 +143,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula", chemInventory.ChemID);
-            ViewData["LocationName"] = new SelectList(_context.Locations.Distinct(), "LocationID", "StorageCode", chemInventory.LocationID);
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode", chemInventory.LocationID);
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", chemInventory.OrderID);
             return View(chemInventory);
         }
@@ -148,6 +155,7 @@ namespace LMS4Carroll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int formulainput, DateTime dateinput, int storageinput, int orderinput, float qtyinput, string unitstring)
         {
+            
             @ViewData["Formula"] = formulainput;
             @ViewData["ExpiryDate"] = dateinput;
             @ViewData["StorageCode"] = storageinput;
@@ -155,13 +163,15 @@ namespace LMS4Carroll.Controllers
             @ViewData["Qty"] = qtyinput;
             @ViewData["Unit"] = unitstring;
             ChemInventory chemInventory = new ChemInventory();
+            var temp = _context.Locations.First(m => m.StorageCode.Equals(storageinput));
+            chemInventory.NormalizedLocation = temp.StorageCode;
             chemInventory.ChemID = formulainput;
             chemInventory.LocationID = storageinput;
             chemInventory.ExpiryDate = dateinput;
             chemInventory.OrderID = orderinput;
             chemInventory.QtyLeft = qtyinput;
             chemInventory.Units = unitstring;
-
+            
             if (id != chemInventory.BarcodeID)
             {
                 return NotFound();
@@ -188,7 +198,7 @@ namespace LMS4Carroll.Controllers
                 return RedirectToAction("Index");
             }
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula", chemInventory.ChemID);
-            ViewData["LocationName"] = new SelectList(_context.Locations.Distinct(), "LocationID", "StorageCode", chemInventory.LocationID);
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode", chemInventory.LocationID);
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", chemInventory.OrderID);
             return View(chemInventory);
         }

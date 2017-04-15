@@ -218,6 +218,7 @@ namespace LMS4Carroll.Migrations
                     Handler = table.Column<string>(maxLength: 50, nullable: true),
                     LocationID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(maxLength: 50, nullable: true),
+                    NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
                     NormalizedStr = table.Column<string>(maxLength: 50, nullable: true),
                     Number = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -299,6 +300,7 @@ namespace LMS4Carroll.Migrations
                     Designation = table.Column<string>(maxLength: 50, nullable: true),
                     Gender = table.Column<string>(maxLength: 50, nullable: true),
                     LocationID = table.Column<int>(nullable: false),
+                    NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
                     OrderID = table.Column<int>(nullable: false),
                     Species = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -360,6 +362,7 @@ namespace LMS4Carroll.Migrations
                     ChemID = table.Column<int>(nullable: false),
                     ExpiryDate = table.Column<DateTime>(nullable: false),
                     LocationID = table.Column<int>(nullable: false),
+                    NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
                     OrderID = table.Column<int>(nullable: false),
                     QtyLeft = table.Column<float>(nullable: false),
                     Units = table.Column<string>(maxLength: 50, nullable: true)
@@ -419,7 +422,7 @@ namespace LMS4Carroll.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CageID = table.Column<int>(nullable: false),
                     Clean = table.Column<bool>(nullable: false),
-                    DatetimeCreated = table.Column<DateTime>(nullable: false,defaultValueSql: "GETUTCDATE()"),
+                    DatetimeCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
                     Food = table.Column<bool>(nullable: false),
                     FoodComments = table.Column<string>(maxLength: 150, nullable: true),
                     Social = table.Column<bool>(nullable: false),
@@ -446,7 +449,7 @@ namespace LMS4Carroll.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     BarcodeID = table.Column<int>(nullable: false),
                     CourseID = table.Column<int>(nullable: false),
-                    DatetimeCreated = table.Column<DateTime>(nullable: false,defaultValueSql: "GETUTCDATE()"),
+                    DatetimeCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
                     QtyUsed = table.Column<float>(nullable: false)
                 },
                 constraints: table =>

@@ -27,6 +27,10 @@ namespace LMS4Carroll.Models
         public virtual Chemical Chemical { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Location")]
+        public string NormalizedLocation { get; set; }
+
+        [StringLength(50)]
         [Display(Name = "Units")]
         public string Units { get; set; }
 

@@ -84,7 +84,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
+        public async Task<IActionResult> Create([Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State")] Chemical chemical)
         {
             if (ModelState.IsValid)
             {
@@ -116,7 +116,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State,Storage")] Chemical chemical)
+        public async Task<IActionResult> Edit(int id, [Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State")] Chemical chemical)
         {
             if (id != chemical.ChemID)
             {

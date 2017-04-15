@@ -36,6 +36,10 @@ namespace LMS4Carroll.Models
         public string NormalizedStr { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Location")]
+        public string NormalizedLocation { get; set; }
+
+        [StringLength(50)]
         [Display(Name = "Course Leader")]
         public string Handler { get; set; }      
     }

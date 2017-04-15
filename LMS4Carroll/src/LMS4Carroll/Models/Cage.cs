@@ -38,5 +38,9 @@ namespace LMS4Carroll.Models
         [StringLength(50)]
         [Display(Name = "Specie")]
         public string Species { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Location")]
+        public string NormalizedLocation { get; set; }
     }
 }

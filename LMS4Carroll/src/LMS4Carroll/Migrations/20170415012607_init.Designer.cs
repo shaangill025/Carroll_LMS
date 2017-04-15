@@ -8,7 +8,7 @@ using LMS4Carroll.Data;
 namespace LMS4Carroll.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170414011947_init")]
+    [Migration("20170415012607_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,6 +150,9 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<int>("LocationID");
 
+                    b.Property<string>("NormalizedLocation")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<int>("OrderID");
 
                     b.Property<string>("Species")
@@ -276,6 +279,9 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<int>("LocationID");
 
+                    b.Property<string>("NormalizedLocation")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<int>("OrderID");
 
                     b.Property<float>("QtyLeft");
@@ -331,6 +337,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("LocationID");
 
                     b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("NormalizedLocation")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("NormalizedStr")

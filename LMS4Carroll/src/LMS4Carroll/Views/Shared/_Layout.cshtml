@@ -31,7 +31,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>           
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>  
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="dropdown">
@@ -100,7 +100,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - CU College of Natural Sciences LIMS Designed by sgill</p>
+            <p>&copy; 2017 - Carroll University Lab Inventory Management System designed by <a href="http://www.linkedin.com/in/shaanjotgill">sgill</a></p>
         </footer>
     </div>
 

@@ -21,12 +21,14 @@
                     </div>
                  </div>
                 <div class="form-group">
+                    <label asp-for="InstalledDate" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
                         <input asp-for="InstalledDate" class="form-control" />
                         <span asp-validation-for="InstalledDate" class="text-danger" />
                     </div>
                 </div>
                 <div class="form-group">
+                    <label asp-for="InspectionDate" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
                         <input asp-for="InspectionDate" class="form-control" />
                         <span asp-validation-for="InspectionDate" class="text-danger" />
@@ -69,7 +71,7 @@
                 </div>
                 <div class="form-group" id="editbtn">
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Save" class="btn btn-default" />
+                        <input type="submit" value="Save" class="btn btn-primary" />
                     </div>
                     <div class="col-md-offset-2 col-md-10">
                         <a asp-action="Index" class="btn btn-danger">Back to List</a>

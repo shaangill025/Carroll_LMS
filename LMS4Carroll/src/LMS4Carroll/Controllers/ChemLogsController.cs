@@ -94,7 +94,7 @@ namespace LMS4Carroll.Controllers
         public IActionResult Create()
         {
             ViewData["BarcodeID"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID");
-            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "CourseID");
+            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr");
             return View();
         }
 
@@ -126,7 +126,7 @@ namespace LMS4Carroll.Controllers
                     return RedirectToAction("Index");
                 }
                 ViewData["BarcodeID"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
-                ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "CourseID", chemLog.CourseID);
+                ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
                 return View(chemLog);
             }
             else
@@ -151,7 +151,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
             ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
-            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "CourseID", chemLog.CourseID);
+            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
             return View(chemLog);
         }
 
@@ -189,7 +189,7 @@ namespace LMS4Carroll.Controllers
                 return RedirectToAction("Index");
             }
             ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
-            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "CourseID", chemLog.CourseID);
+            ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
             return View(chemLog);
         }
 
@@ -216,6 +216,12 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var used = chemLog.QtyUsed;
+            var barcode = chemLog.BarcodeID;
+            var chemInv = _context.ChemInventory.First(m => m.BarcodeID == barcode);
+            var tempQty = chemInv.QtyLeft;
+            chemInv.QtyLeft = tempQty + used;
+            _context.Update(chemInv);
             _context.ChemLog.Remove(chemLog);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
