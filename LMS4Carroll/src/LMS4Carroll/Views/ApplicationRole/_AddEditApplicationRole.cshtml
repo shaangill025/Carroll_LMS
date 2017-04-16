@@ -1,6 +1,10 @@
 ﻿@model LMS4Carroll.Models.ApplicationRoleViewModel
 @using LMS4Carroll.Models
 
+@{
+    ViewData["Title"] = "Edit | Roles";
+}
+
 <form asp-action="AddEditApplicationRole" role="form">
     @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(String.IsNullOrEmpty(Model.Id) ? "Add" : "Edit")} Application Role" })
     <div class="modal-body form-horizontal">

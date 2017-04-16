@@ -1,6 +1,10 @@
 ﻿@model string
 @using LMS4Carroll.Models
 
+@{
+    ViewData["Title"] = "Delete | Roles";
+}
+
 <form asp-action="DeleteApplicationRole" role="form">
     @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Delete Application Role" })
 

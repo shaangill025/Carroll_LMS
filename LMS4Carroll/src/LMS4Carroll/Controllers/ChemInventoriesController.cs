@@ -83,6 +83,7 @@ namespace LMS4Carroll.Controllers
         {
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula");
             ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode");
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "NormalizedStr");
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID");
             return View();
         }
@@ -126,6 +127,7 @@ namespace LMS4Carroll.Controllers
             }
             ViewData["ChemID"] = new SelectList(_context.Chemical, "ChemID", "Formula", chemInventory.ChemID);
             ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "StorageCode", chemInventory.LocationID);
+            ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "NormalizedStr", chemInventory.LocationID);
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", chemInventory.OrderID);
             return View(chemInventory);
         }
