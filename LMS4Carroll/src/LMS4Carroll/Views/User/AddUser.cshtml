@@ -1,6 +1,10 @@
 ﻿@model LMS4Carroll.Models.UserViewModel
 @using LMS4Carroll.Models
 
+@{
+    ViewData["Title"] = "Add | User";
+}
+
 <form asp-action="AddUser" role="form">
     @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = "Add User" })
     <div class="modal-body form-horizontal">
