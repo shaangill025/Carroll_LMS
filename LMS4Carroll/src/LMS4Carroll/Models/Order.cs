@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Order ID")]
-        public int OrderID { get; set; }
+        public int? OrderID { get; set; }
 
         [ForeignKey("Vendor")]
         public int VendorID { get; set; }
@@ -37,11 +38,13 @@ namespace LMS4Carroll.Models
         public string PO { get; set; }
 
         [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Order Date")]
         public DateTime Orderdate { get; set; }
 
         [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Delivery Date")]
         public DateTime Recievedate { get; set; }
@@ -52,5 +55,8 @@ namespace LMS4Carroll.Models
 
         public virtual ICollection<FileDetail> FileDetails { get; set; }
         public virtual ICollection<ChemEquipment> ChemEquipments { get; set; }
+        public virtual ICollection<BioEquipment> BioEquipments { get; set; }
+        public virtual ICollection<Animal> Animals { get; set; }
+        public virtual ICollection<ChemInventory> ChemInventorys { get; set; }
     }
 }

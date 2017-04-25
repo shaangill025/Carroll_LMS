@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 using LMS4Carroll.Models;
 using LMS4Carroll.Models.AccountViewModels;
 using LMS4Carroll.Services;
+using NLog;
+using NLog.Fluent;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
@@ -24,22 +27,23 @@ namespace LMS4Carroll.Controllers
 
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
-        private ILogger<AccountController> _logger;
+        //private readonly NLog.ILogger _logger;
+
+        //private Serilog.ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             IEmailSender emailSender,
-            ISmsSender smsSender,
-            ILogger<AccountController> logger)
+            ISmsSender smsSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
-            _logger = logger;
+            //_logger = LogManager.GetLogger("databaseLogger"); 
         }
 
         //
@@ -48,7 +52,8 @@ namespace LMS4Carroll.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
-            _logger.LogCritical("Attempted login - ActionController");
+            //_logger.Info("Attempted login - ActionController");
+            //_logger.ForContext("User", "test").Information("Data Added Successfully");
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -77,7 +82,8 @@ namespace LMS4Carroll.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation(1, "User logged in.");
+                    //_logger.LogInformation(1, "User logged in.");
+                    sp_Logging("1-Info", "Login", "User Logged in", "Success", model.Email);
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -86,7 +92,7 @@ namespace LMS4Carroll.Controllers
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning(2, "User account locked out.");
+                    //_logger.LogWarning(2, "User account locked out.");
                     return View("Lockout");
                 }
                 else
@@ -130,10 +136,13 @@ namespace LMS4Carroll.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                        $"Please confirm your account by clicking the following link: \n{callbackUrl}");
+                    await _emailSender.SendEmailAsync("ckadrich@carrollu.edu", "New Account Registered",
+                       $"New user account has been created [awaiting email confirmation].\n Email Address: " + user.Email +
+                       "\n Name: " + user.FirstName + " " + user.LastName);
                     // Comment out following line to prevent a new user automatically logged on.
                     // await _signInManager.SignInAsync(user, isPersistent: false);
                     await _userManager.AddToRoleAsync(user,"Student");
-                    _logger.LogInformation(3, "User created a new account with password.");
+                    //_logger.LogInformation(3, "User created a new account with password.");
                     return View("CheckEmail");
                 }
                 AddErrors(result);
@@ -150,7 +159,7 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation(4, "User logged out.");
+            sp_Logging("1-Info", "Logoff", "User Logged out", "Success");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
@@ -188,7 +197,7 @@ namespace LMS4Carroll.Controllers
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
-                _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                //_logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -232,7 +241,7 @@ namespace LMS4Carroll.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
+                        //_logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -292,6 +301,7 @@ namespace LMS4Carroll.Controllers
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                    $"Please reset your password by clicking here:\n {callbackUrl}");
+                sp_Logging("1-Info", "Forgot Password", "User Forgot password - Email Requested", "Success");
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -337,6 +347,7 @@ namespace LMS4Carroll.Controllers
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
+                sp_Logging("2-Change", "Reset Password", "User Reset Password", "Success");
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
             AddErrors(result);
@@ -443,7 +454,7 @@ namespace LMS4Carroll.Controllers
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning(7, "User account locked out.");
+                //_logger.LogWarning(7, "User account locked out.");
                 return View("Lockout");
             }
             else
@@ -486,5 +497,56 @@ namespace LMS4Carroll.Controllers
         }
 
         #endregion
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Account";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception, string email)
+        { 
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = email;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Account";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
     }
 }

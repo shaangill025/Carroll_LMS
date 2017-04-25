@@ -1,7 +1,7 @@
-@model IEnumerable<LMS4Carroll.Models.Cage>
+@model IEnumerable<LMS4Carroll.Models.Animal>
 
 @{
-    ViewData["Title"] = "List | Cages";
+    ViewData["Title"] = "List | Animals";
 }
 
 
@@ -10,10 +10,10 @@
     <div class="panel-heading panel-head">Cage</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+            @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-plus"></i>  Add Cage
+                    <i class="glyphicon glyphicon-plus"></i>  Add Animal
                 </a>
             }
         </div><br />
@@ -30,7 +30,7 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.CageID)
+                        @Html.DisplayNameFor(model => model.AnimalID)
                     </th>
                     <th>
                         Location
@@ -39,7 +39,13 @@
                         @Html.DisplayNameFor(model => model.DOB)
                     </th>
                     <th>
+                        @Html.DisplayNameFor(model => model.DOR)
+                    </th>
+                    <th>
                         @Html.DisplayNameFor(model => model.Designation)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Gender)
@@ -47,7 +53,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Species)
                     </th>
-                   @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+                   @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
                    {
                     <th>
                         Actions
@@ -61,7 +67,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CageID)
+                            @Html.DisplayFor(modelItem => item.AnimalID)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Location.NormalizedStr)
@@ -70,7 +76,13 @@
                             @Html.DisplayFor(modelItem => item.DOB)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.DOR)
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.Designation)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Gender)
@@ -78,17 +90,17 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Species)
                         </td>
-                        @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
                         {
                             <td>
-                                <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.CageID" class="btn btn-info">
-                                    <i class="glyphicon glyphicon-pencil"></i>Edit
+                                <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.AnimalID" class="btn btn-info">
+                                    <i class="glyphicon glyphicon-pencil"></i>  Edit
                                 </a>
-                                <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.CageID" class="btn btn-danger">
-                                    <i class="glyphicon glyphicon-trash"></i>Delete
+                                <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.AnimalID" class="btn btn-danger">
+                                    <i class="glyphicon glyphicon-trash"></i>  Delete
                                 </a>
-                                <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.CageID" class="btn btn-info">
-                                    <i class="glyphicon glyphicon-pencil"></i>Details
+                                <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.AnimalID" class="btn btn-info">
+                                    <i class="glyphicon glyphicon-search"></i>  Details
                                 </a>
                             </td>
                         }

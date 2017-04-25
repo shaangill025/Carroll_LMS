@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LMS4Carroll.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -30,6 +30,7 @@ namespace LMS4Carroll.Controllers
         {
             try
             {
+                sp_Logging("1-Info", "View", "Successfuly viewed Users list", "Success");
                 List<UserListViewModel> model = new List<UserListViewModel>();
                 model = userManager.Users.Select(u => new UserListViewModel
                 {
@@ -85,6 +86,7 @@ namespace LMS4Carroll.Controllers
                     string existingRole = userManager.GetRolesAsync(user).Result.Single();
                     string existingRoleId = roleManager.Roles.Single(r => r.Name == existingRole).Id;
                     IdentityResult result = await userManager.UpdateAsync(user);
+                    sp_Logging("2-Change", "Edit", "User edited a user item where email=" + model.Email, "Success");
                     if (result.Succeeded)
                     {
                         if (existingRoleId != model.ApplicationRoleId)
@@ -96,6 +98,7 @@ namespace LMS4Carroll.Controllers
                                 if (applicationRole != null)
                                 {
                                     IdentityResult newRoleResult = await userManager.AddToRoleAsync(user, applicationRole.Name);
+
                                     if (newRoleResult.Succeeded)
                                     {
                                         return RedirectToAction("Index");
@@ -133,6 +136,7 @@ namespace LMS4Carroll.Controllers
                 if (applicationUser != null)
                 {
                     IdentityResult result = await userManager.DeleteAsync(applicationUser);
+                    sp_Logging("2-Change", "Edit", "User deleted a user item where email=" + applicationUser.Email, "Success");
                     if (result.Succeeded)
                     {
                         return RedirectToAction("Index");
@@ -140,6 +144,32 @@ namespace LMS4Carroll.Controllers
                 }
             }
             return View();
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Users";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

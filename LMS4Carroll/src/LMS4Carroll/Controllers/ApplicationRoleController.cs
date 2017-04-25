@@ -7,10 +7,11 @@ using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class ApplicationRoleController : Controller
     {
         private readonly RoleManager<ApplicationRole> roleManager;
@@ -23,6 +24,7 @@ namespace LMS4Carroll.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            sp_Logging("1-Info", "View", "Successfuly viewed Roles list", "Success");
             List<ApplicationRoleListViewModel> model = new List<ApplicationRoleListViewModel>();
             model = roleManager.Roles.Select(r => new ApplicationRoleListViewModel
             {
@@ -60,6 +62,7 @@ namespace LMS4Carroll.Controllers
                {
                    CreatedDate = DateTime.UtcNow
                };
+                sp_Logging("2-Change", "Add/Edit", "Successfuly added or edited a Role", "Success");
                 applicationRole.Name = model.RoleName;
                 applicationRole.Description = model.Description;
                 applicationRole.IPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
@@ -99,11 +102,38 @@ namespace LMS4Carroll.Controllers
                     IdentityResult roleRuslt = roleManager.DeleteAsync(applicationRole).Result;
                     if (roleRuslt.Succeeded)
                     {
+                        sp_Logging("3-Remove", "Delete", "Successfuly deleted a Role", "Success");
                         return RedirectToAction("Index");
                     }
                 }
             }
             return View();
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "RolesDB";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

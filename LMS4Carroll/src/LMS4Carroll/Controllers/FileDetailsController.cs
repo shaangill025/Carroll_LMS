@@ -11,6 +11,7 @@ using LMS4Carroll.Models;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
@@ -73,6 +74,7 @@ namespace LMS4Carroll.Controllers
             {
                 _context.Add(fileDetail);
                 await _context.SaveChangesAsync();
+                sp_Logging("2-Change", "Create", "User uploaded a File where Filename=" + filename, "Success");
                 return RedirectToAction("Index");
             }
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", fileDetail.OrderID);
@@ -85,6 +87,7 @@ namespace LMS4Carroll.Controllers
             byte[] fileBytes = fileDetail.File;
             string fileName = fileDetail.FileName;
             string fileExt = fileDetail.FileType;
+            sp_Logging("2-Download", "Download", "User downloaded a file where ID=" + id.ToString(), "Success");
             return File(fileBytes, "application/x-msdownload", fileName + "." + fileExt);
         }
 
@@ -113,12 +116,39 @@ namespace LMS4Carroll.Controllers
             var fileDetail = await _context.FileDetails.SingleOrDefaultAsync(m => m.FileDetailID == id);
             _context.FileDetails.Remove(fileDetail);
             await _context.SaveChangesAsync();
+            sp_Logging("3-Remove", "Delete", "User deleted an Invoice where ID=" + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 
         private bool FileDetailExists(int id)
         {
             return _context.FileDetails.Any(e => e.FileDetailID == id);
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "FileDB";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

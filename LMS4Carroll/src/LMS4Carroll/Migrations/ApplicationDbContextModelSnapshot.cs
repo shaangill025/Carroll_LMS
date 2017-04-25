@@ -16,6 +16,43 @@ namespace LMS4Carroll.Migrations
                 .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("LMS4Carroll.Models.Animal", b =>
+                {
+                    b.Property<int>("AnimalID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DOB");
+
+                    b.Property<DateTime>("DOR");
+
+                    b.Property<string>("Designation")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("Gender")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<int>("LocationID");
+
+                    b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("NormalizedLocation")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<int>("OrderID");
+
+                    b.Property<string>("Species")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.HasKey("AnimalID");
+
+                    b.HasIndex("LocationID");
+
+                    b.HasIndex("OrderID");
+
+                    b.ToTable("Animal");
+                });
+
             modelBuilder.Entity("LMS4Carroll.Models.ApplicationRole", b =>
                 {
                     b.Property<string>("Id");
@@ -115,9 +152,9 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<DateTime>("InstalledDate");
 
-                    b.Property<int>("LocationID");
+                    b.Property<int?>("LocationID");
 
-                    b.Property<int>("OrderID");
+                    b.Property<int?>("OrderID");
 
                     b.Property<string>("SerialNumber")
                         .HasAnnotation("MaxLength", 50);
@@ -134,44 +171,12 @@ namespace LMS4Carroll.Migrations
                     b.ToTable("BioEquipments");
                 });
 
-            modelBuilder.Entity("LMS4Carroll.Models.Cage", b =>
-                {
-                    b.Property<int>("CageID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("DOB");
-
-                    b.Property<string>("Designation")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("Gender")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<int>("LocationID");
-
-                    b.Property<string>("NormalizedLocation")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<int>("OrderID");
-
-                    b.Property<string>("Species")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.HasKey("CageID");
-
-                    b.HasIndex("LocationID");
-
-                    b.HasIndex("OrderID");
-
-                    b.ToTable("Cage");
-                });
-
             modelBuilder.Entity("LMS4Carroll.Models.CageLog", b =>
                 {
                     b.Property<int>("LogID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CageID");
+                    b.Property<int>("AnimalID");
 
                     b.Property<bool>("Clean");
 
@@ -195,7 +200,7 @@ namespace LMS4Carroll.Migrations
 
                     b.HasKey("LogID");
 
-                    b.HasIndex("CageID");
+                    b.HasIndex("AnimalID");
 
                     b.ToTable("CageLog");
                 });
@@ -215,9 +220,9 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<DateTime>("InstalledDate");
 
-                    b.Property<int>("LocationID");
+                    b.Property<int?>("LocationID");
 
-                    b.Property<int>("OrderID");
+                    b.Property<int?>("OrderID");
 
                     b.Property<string>("SerialNumber")
                         .HasAnnotation("MaxLength", 50);
@@ -236,7 +241,7 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.Chemical", b =>
                 {
-                    b.Property<int>("ChemID")
+                    b.Property<int?>("ChemID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CAS")
@@ -272,16 +277,19 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("BarcodeID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ChemID");
+                    b.Property<int?>("ChemID");
+
+                    b.Property<string>("Department")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<DateTime>("ExpiryDate");
 
-                    b.Property<int>("LocationID");
+                    b.Property<int?>("LocationID");
 
                     b.Property<string>("NormalizedLocation")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<int>("OrderID");
+                    b.Property<int?>("OrderID");
 
                     b.Property<float>("QtyLeft");
 
@@ -334,7 +342,7 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("Handler")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<int>("LocationID");
+                    b.Property<int?>("LocationID");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -376,7 +384,7 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("FileType")
                         .HasAnnotation("MaxLength", 100);
 
-                    b.Property<int>("OrderID");
+                    b.Property<int?>("OrderID");
 
                     b.HasKey("FileDetailID");
 
@@ -421,7 +429,7 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.Order", b =>
                 {
-                    b.Property<int>("OrderID")
+                    b.Property<int?>("OrderID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CAT")
@@ -468,10 +476,6 @@ namespace LMS4Carroll.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("SNNumber")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
@@ -566,37 +570,35 @@ namespace LMS4Carroll.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("LMS4Carroll.Models.BioEquipment", b =>
+            modelBuilder.Entity("LMS4Carroll.Models.Animal", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.Location", "Location")
-                        .WithMany()
+                        .WithMany("Animals")
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("LMS4Carroll.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("Animals")
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("LMS4Carroll.Models.Cage", b =>
+            modelBuilder.Entity("LMS4Carroll.Models.BioEquipment", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("BioEquipments")
+                        .HasForeignKey("LocationID");
 
                     b.HasOne("LMS4Carroll.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("BioEquipments")
+                        .HasForeignKey("OrderID");
                 });
 
             modelBuilder.Entity("LMS4Carroll.Models.CageLog", b =>
                 {
-                    b.HasOne("LMS4Carroll.Models.Cage", "Cage")
-                        .WithMany()
-                        .HasForeignKey("CageID")
+                    b.HasOne("LMS4Carroll.Models.Animal", "Animal")
+                        .WithMany("CageLogs")
+                        .HasForeignKey("AnimalID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -604,42 +606,37 @@ namespace LMS4Carroll.Migrations
                 {
                     b.HasOne("LMS4Carroll.Models.Location", "Location")
                         .WithMany("ChemEquipments")
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("LocationID");
 
                     b.HasOne("LMS4Carroll.Models.Order", "Order")
                         .WithMany("ChemEquipments")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OrderID");
                 });
 
             modelBuilder.Entity("LMS4Carroll.Models.ChemInventory", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.Chemical", "Chemical")
-                        .WithMany()
-                        .HasForeignKey("ChemID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("ChemInventories")
+                        .HasForeignKey("ChemID");
 
                     b.HasOne("LMS4Carroll.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("ChemInventories")
+                        .HasForeignKey("LocationID");
 
                     b.HasOne("LMS4Carroll.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("ChemInventorys")
+                        .HasForeignKey("OrderID");
                 });
 
             modelBuilder.Entity("LMS4Carroll.Models.ChemLog", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.ChemInventory", "ChemInventory")
-                        .WithMany()
+                        .WithMany("ChemLogs")
                         .HasForeignKey("BarcodeID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("LMS4Carroll.Models.Course", "Course")
-                        .WithMany()
+                        .WithMany("ChemLogs")
                         .HasForeignKey("CourseID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -647,17 +644,15 @@ namespace LMS4Carroll.Migrations
             modelBuilder.Entity("LMS4Carroll.Models.Course", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("Courses")
+                        .HasForeignKey("LocationID");
                 });
 
             modelBuilder.Entity("LMS4Carroll.Models.FileDetail", b =>
                 {
                     b.HasOne("LMS4Carroll.Models.Order", "Order")
                         .WithMany("FileDetails")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OrderID");
                 });
 
             modelBuilder.Entity("LMS4Carroll.Models.Order", b =>

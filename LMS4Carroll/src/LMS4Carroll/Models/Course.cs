@@ -16,7 +16,7 @@ namespace LMS4Carroll.Models
 
         [ForeignKey("Location")]
         [Display(Name = "Lab Location")]
-        public int LocationID { get; set; }
+        public int? LocationID { get; set; }
         public virtual Location Location { get; set; }
 
         [Required]
@@ -44,6 +44,9 @@ namespace LMS4Carroll.Models
 
         [StringLength(50)]
         [Display(Name = "Course Leader")]
-        public string Handler { get; set; }      
+        public string Handler { get; set; }
+
+        public virtual ICollection<ChemLog> ChemLogs { get; set; }
+
     }
 }

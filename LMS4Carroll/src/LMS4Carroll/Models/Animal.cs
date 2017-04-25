@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace LMS4Carroll.Models
 {
-    public class Cage
+    public class Animal
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Cage ID")]
-        public int CageID { get; set; }
+        [Display(Name = "Animals ID")]
+        public int AnimalID { get; set; }
 
         [ForeignKey("Order")]
         public int OrderID { get; set; }
@@ -27,20 +28,33 @@ namespace LMS4Carroll.Models
         public string Designation { get; set; }
 
         [StringLength(50)]
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        [StringLength(50)]
         [Display(Name = "Gender")]
         public string Gender { get; set; }
 
         [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "DOB")]
         public DateTime DOB { get; set; }
 
+        [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Date Removed")]
+        public DateTime DOR { get; set; }
+
         [StringLength(50)]
-        [Display(Name = "Specie")]
+        [Display(Name = "Species")]
         public string Species { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Location")]
         public string NormalizedLocation { get; set; }
+
+        public virtual ICollection<CageLog> CageLogs { get; set; }
     }
 }

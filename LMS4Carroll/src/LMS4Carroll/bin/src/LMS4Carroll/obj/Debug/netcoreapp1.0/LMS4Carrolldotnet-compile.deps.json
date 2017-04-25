@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.0/",
-    "signature": "0a33c03d74d5ed1c03e6b2417ba1ad8b1533d8ae"
+    "signature": "7da37719ecfb3915411c4dc2333ea24420885082"
   },
   "compilationOptions": {
     "defines": [
@@ -41,7 +41,10 @@
           "Google.Apis.Auth": "1.24.1",
           "NLog.Web.AspNetCore": "4.3.1",
           "NLog.InstallNLogConfig": "2.0.0",
-          "NLog.Config": "4.4.5"
+          "NLog.Config": "4.5.0-alpha04",
+          "NLog.Schema": "4.5.0-alpha04",
+          "NLog.Extensions.Logging": "1.0.0-rtm-beta4",
+          "NLog": "5.0.0-beta06"
         },
         "compile": {
           "LMS4Carroll.dll": {}
@@ -1425,7 +1428,7 @@
           "lib/netstandard1.0/Newtonsoft.Json.dll": {}
         }
       },
-      "NLog/5.0.0-beta05": {
+      "NLog/5.0.0-beta06": {
         "dependencies": {
           "Microsoft.Extensions.PlatformAbstractions": "1.0.0",
           "NETStandard.Library": "1.6.1",
@@ -1454,16 +1457,16 @@
           "lib/netstandard1.5/NLog.dll": {}
         }
       },
-      "NLog.Config/4.4.5": {
+      "NLog.Config/4.5.0-alpha04": {
         "dependencies": {
-          "NLog": "5.0.0-beta05",
-          "NLog.Schema": "4.4.5"
+          "NLog": "5.0.0-beta06",
+          "NLog.Schema": "4.5.0-alpha04"
         }
       },
-      "NLog.Extensions.Logging/1.0.0-rtm-beta2": {
+      "NLog.Extensions.Logging/1.0.0-rtm-beta4": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
-          "NLog": "5.0.0-beta05",
+          "NLog": "5.0.0-beta06",
           "System.AppContext": "4.3.0"
         },
         "compile": {
@@ -1472,18 +1475,18 @@
       },
       "NLog.InstallNLogConfig/2.0.0": {
         "dependencies": {
-          "NLog": "5.0.0-beta05"
+          "NLog": "5.0.0-beta06"
         }
       },
-      "NLog.Schema/4.4.5": {},
+      "NLog.Schema/4.5.0-alpha04": {},
       "NLog.Web.AspNetCore/4.3.1": {
         "dependencies": {
           "Microsoft.AspNetCore.Hosting": "1.0.0",
           "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0",
           "Microsoft.AspNetCore.Http.Extensions": "1.0.0",
           "Microsoft.AspNetCore.Routing.Abstractions": "1.0.1",
-          "NLog": "5.0.0-beta05",
-          "NLog.Extensions.Logging": "1.0.0-rtm-beta2"
+          "NLog": "5.0.0-beta06",
+          "NLog.Extensions.Logging": "1.0.0-rtm-beta4"
         },
         "compile": {
           "lib/netstandard1.3/NLog.Web.AspNetCore.dll": {}
@@ -3157,7 +3160,10 @@
           "Google.Apis.Auth": "1.24.1",
           "NLog.Web.AspNetCore": "4.3.1",
           "NLog.InstallNLogConfig": "2.0.0",
-          "NLog.Config": "4.4.5"
+          "NLog.Config": "4.5.0-alpha04",
+          "NLog.Schema": "4.5.0-alpha04",
+          "NLog.Extensions.Logging": "1.0.0-rtm-beta4",
+          "NLog": "5.0.0-beta06"
         },
         "runtime": {
           "LMS4Carroll.dll": {}
@@ -4538,7 +4544,7 @@
           "lib/netstandard1.0/Newtonsoft.Json.dll": {}
         }
       },
-      "NLog/5.0.0-beta05": {
+      "NLog/5.0.0-beta06": {
         "dependencies": {
           "Microsoft.Extensions.PlatformAbstractions": "1.0.0",
           "NETStandard.Library": "1.6.1",
@@ -4567,16 +4573,16 @@
           "lib/netstandard1.5/NLog.dll": {}
         }
       },
-      "NLog.Config/4.4.5": {
+      "NLog.Config/4.5.0-alpha04": {
         "dependencies": {
-          "NLog": "5.0.0-beta05",
-          "NLog.Schema": "4.4.5"
+          "NLog": "5.0.0-beta06",
+          "NLog.Schema": "4.5.0-alpha04"
         }
       },
-      "NLog.Extensions.Logging/1.0.0-rtm-beta2": {
+      "NLog.Extensions.Logging/1.0.0-rtm-beta4": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
-          "NLog": "5.0.0-beta05",
+          "NLog": "5.0.0-beta06",
           "System.AppContext": "4.3.0"
         },
         "runtime": {
@@ -4585,18 +4591,18 @@
       },
       "NLog.InstallNLogConfig/2.0.0": {
         "dependencies": {
-          "NLog": "5.0.0-beta05"
+          "NLog": "5.0.0-beta06"
         }
       },
-      "NLog.Schema/4.4.5": {},
+      "NLog.Schema/4.5.0-alpha04": {},
       "NLog.Web.AspNetCore/4.3.1": {
         "dependencies": {
           "Microsoft.AspNetCore.Hosting": "1.0.0",
           "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0",
           "Microsoft.AspNetCore.Http.Extensions": "1.0.0",
           "Microsoft.AspNetCore.Routing.Abstractions": "1.0.1",
-          "NLog": "5.0.0-beta05",
-          "NLog.Extensions.Logging": "1.0.0-rtm-beta2"
+          "NLog": "5.0.0-beta06",
+          "NLog.Extensions.Logging": "1.0.0-rtm-beta4"
         },
         "runtime": {
           "lib/netstandard1.3/NLog.Web.AspNetCore.dll": {}
@@ -6695,30 +6701,30 @@
       "serviceable": true,
       "sha512": "sha512-U82mHQSKaIk+lpSVCbWYKNavmNH1i5xrExDEquU1i6I5pV6UMOqRnJRSlKO3cMPfcpp0RgDY+8jUXHdQ4IfXvw=="
     },
-    "NLog/5.0.0-beta05": {
+    "NLog/5.0.0-beta06": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-w8o0ZjF/8qM8eOrm8PtfE0AJv+huOt3T3C7EjUfao1whmqRTTAcTDCELwA3O6WG6ErYzqQnciUeRUEpM/OvWMA=="
+      "sha512": "sha512-3fj23HUh3c66QmmMcFrByjRusvl58X14MS3RyUICiz9TBtOJJTvZZeb+Glm794EzrA06rmm51BZloNGhdH6D0w=="
     },
-    "NLog.Config/4.4.5": {
+    "NLog.Config/4.5.0-alpha04": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-wZqpUMpeaBgSK0XS0E4VYJgMPb/+R84q8oJ4wEcXn2qYE97cCtCSfqq8DI9eIWaSuQS1kC6iM5NiYOi7942reg=="
+      "sha512": "sha512-N0AqEAuWBsGEww8GdGnnti1b2xmkRnmfM1jwRA+h11haD5gv+ALoktObq69hilYV9u3/poBxX+1Ew9elJhMUvA=="
     },
-    "NLog.Extensions.Logging/1.0.0-rtm-beta2": {
+    "NLog.Extensions.Logging/1.0.0-rtm-beta4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-8RX13/osS2gSHCMSY/dsCXAVHPLA3lHOH/rEkVWDBCDheVPB9AKEzsv73x/7ShVaX8FVo6ZRntk5GHIqYj/dlw=="
+      "sha512": "sha512-mRnF6TGoQS2Jqpejw0Z6iL7ZXAGwn4DELFXnDvo0L8HEUyzg25HgRvqYhAtGXLxAB7H6kx2+QlHgVHCo8Svfww=="
     },
     "NLog.InstallNLogConfig/2.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-Bfy9dMcH+9Sw3o3AJtzrlN8Pu90HyCxSHZWbP2AaZy8g6DvC+VyPXiRf9g2XUN+RdXdIxb3ybzHhcar7wwwLoQ=="
     },
-    "NLog.Schema/4.4.5": {
+    "NLog.Schema/4.5.0-alpha04": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-+9ZFjV0a4u132vfEh/r5Ga9Cnj1DT3vX35D6aoqKnCiAyuKklZvsRGR96D3TxjSPR3/deDVrtiWZvId5/Gu2lw=="
+      "sha512": "sha512-brr0FVJWgd5lXnyf/bYxqVNp2G0/dWWkmrbRPDOEip5PdnIlaar4dIrinax6+Q6+AQwQ1lS6ynQK5UNeAJmNGw=="
     },
     "NLog.Web.AspNetCore/4.3.1": {
       "type": "package",

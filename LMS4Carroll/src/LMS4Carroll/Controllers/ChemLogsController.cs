@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize (Roles = "Admin,Handler,Student")]
+    [Authorize (Roles = "Admin,ChemUser,BiologyUser,Student")]
     public class ChemLogsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +27,7 @@ namespace LMS4Carroll.Controllers
         {
             //var applicationDbContext = _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course);
             ViewData["CurrentFilter"] = chemlogstring;
-
+            sp_Logging("1-Info", "View", "Successfuly viewed Chemical Log list", "Success");
             var logs = from m in _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course)
                        select m;
 
@@ -73,7 +74,6 @@ namespace LMS4Carroll.Controllers
             //return View(await applicationDbContext.ToListAsync());
         }
 
-        [Authorize(Roles = "Admin")]
         // GET: ChemLogs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -124,6 +124,7 @@ namespace LMS4Carroll.Controllers
                     chemLog.QtyUsed = qtyusedinput;
                     _context.Add(chemLog);
                     await _context.SaveChangesAsync();
+                    sp_Logging("2-Change", "Create", "User created a Log entry where Barcode=" + barcodeinput, "Success");
                     return RedirectToAction("Index");
                 }
                 ViewData["BarcodeID"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
@@ -137,7 +138,6 @@ namespace LMS4Carroll.Controllers
            
         }
 
-        [Authorize( Roles = "Admin")]
         // GET: ChemLogs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -159,17 +159,14 @@ namespace LMS4Carroll.Controllers
         // POST: ChemLogs/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int barcodeinput, int courseinput, float qtyusedinput)
         {
-            ViewData["Barcode"] = barcodeinput;
-            ViewData["Barcode"] = courseinput;
-            ViewData["Qty"] = qtyusedinput;
+       
             if (_context.ChemInventory.Count(M => M.BarcodeID == barcodeinput) >= 1)
             {
-                ChemLog chemLog = new ChemLog();
+                ChemLog chemLog = await _context.ChemLog.FirstAsync(m => m.LogID == id);
                 ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.BarcodeID == barcodeinput);
                 float tempValue = temp.QtyLeft;
                 temp.QtyLeft = tempValue - qtyusedinput;
@@ -190,6 +187,8 @@ namespace LMS4Carroll.Controllers
                     {
                         _context.Update(chemLog);
                         await _context.SaveChangesAsync();
+                        sp_Logging("2-Change", "Edit", "User edited a Log entry where ID= " + id.ToString(), "Success");
+
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -245,12 +244,39 @@ namespace LMS4Carroll.Controllers
             _context.Update(chemInv);
             _context.ChemLog.Remove(chemLog);
             await _context.SaveChangesAsync();
+            sp_Logging("3-Remove", "Edit", "User deleted a Log entry where ID= " + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 
         private bool ChemLogExists(int id)
         {
             return _context.ChemLog.Any(e => e.LogID == id);
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Chemical Log";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

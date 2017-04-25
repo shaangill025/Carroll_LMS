@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -15,11 +16,11 @@ namespace LMS4Carroll.Models
         public int ChemEquipmentID { get; set; }
 
         [ForeignKey("Order")]
-        public int OrderID { get; set; }
+        public int? OrderID { get; set; }
         public virtual Order Order { get; set; }
 
         [ForeignKey("Location")]
-        public int LocationID { get; set; }
+        public int? LocationID { get; set; }
         public virtual Location Location { get; set; }
 
         [StringLength(50)]
@@ -31,11 +32,13 @@ namespace LMS4Carroll.Models
         public string SerialNumber { get; set; }
 
         [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Installed Date")]
         public DateTime InstalledDate { get; set; }
 
         [DataType(DataType.Date)]
+        [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Next Inspection")]
         public DateTime InspectionDate { get; set; }

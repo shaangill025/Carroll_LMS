@@ -2143,7 +2143,7 @@
           "lib/netstandard1.0/Newtonsoft.Json.dll": {}
         }
       },
-      "NLog/5.0.0-beta05": {
+      "NLog/5.0.0-beta06": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.PlatformAbstractions": "1.0.0",
@@ -2176,18 +2176,18 @@
           "lib/netstandard1.5/NLog.dll": {}
         }
       },
-      "NLog.Config/4.4.5": {
+      "NLog.Config/4.5.0-alpha04": {
         "type": "package",
         "dependencies": {
-          "NLog": "4.4.5",
-          "NLog.Schema": "4.4.5"
+          "NLog": "4.5.0-alpha04",
+          "NLog.Schema": "4.5.0-alpha04"
         }
       },
-      "NLog.Extensions.Logging/1.0.0-rtm-beta2": {
+      "NLog.Extensions.Logging/1.0.0-rtm-beta4": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
-          "NLog": "5.0.0-beta05",
+          "NLog": "5.0.0-beta06",
           "System.AppContext": "4.3.0"
         },
         "compile": {
@@ -2203,7 +2203,7 @@
           "NLog": "4.0.0"
         }
       },
-      "NLog.Schema/4.4.5": {
+      "NLog.Schema/4.5.0-alpha04": {
         "type": "package"
       },
       "NLog.Web.AspNetCore/4.3.1": {
@@ -6787,12 +6787,12 @@
         "tools/install.ps1"
       ]
     },
-    "NLog/5.0.0-beta05": {
-      "sha512": "w8o0ZjF/8qM8eOrm8PtfE0AJv+huOt3T3C7EjUfao1whmqRTTAcTDCELwA3O6WG6ErYzqQnciUeRUEpM/OvWMA==",
+    "NLog/5.0.0-beta06": {
+      "sha512": "3fj23HUh3c66QmmMcFrByjRusvl58X14MS3RyUICiz9TBtOJJTvZZeb+Glm794EzrA06rmm51BZloNGhdH6D0w==",
       "type": "package",
-      "path": "NLog/5.0.0-beta05",
+      "path": "NLog/5.0.0-beta06",
       "files": [
-        "NLog.5.0.0-beta05.nupkg.sha512",
+        "NLog.5.0.0-beta06.nupkg.sha512",
         "NLog.nuspec",
         "lib/monoandroid23/NLog.dll",
         "lib/monoandroid23/NLog.xml",
@@ -6816,23 +6816,23 @@
         "lib/xamarinios10/NLog.xml"
       ]
     },
-    "NLog.Config/4.4.5": {
-      "sha512": "wZqpUMpeaBgSK0XS0E4VYJgMPb/+R84q8oJ4wEcXn2qYE97cCtCSfqq8DI9eIWaSuQS1kC6iM5NiYOi7942reg==",
+    "NLog.Config/4.5.0-alpha04": {
+      "sha512": "N0AqEAuWBsGEww8GdGnnti1b2xmkRnmfM1jwRA+h11haD5gv+ALoktObq69hilYV9u3/poBxX+1Ew9elJhMUvA==",
       "type": "package",
-      "path": "NLog.Config/4.4.5",
+      "path": "NLog.Config/4.5.0-alpha04",
       "files": [
-        "NLog.Config.4.4.5.nupkg.sha512",
+        "NLog.Config.4.5.0-alpha04.nupkg.sha512",
         "NLog.Config.nuspec",
         "content/NLog.config",
         "tools/Install.ps1"
       ]
     },
-    "NLog.Extensions.Logging/1.0.0-rtm-beta2": {
-      "sha512": "8RX13/osS2gSHCMSY/dsCXAVHPLA3lHOH/rEkVWDBCDheVPB9AKEzsv73x/7ShVaX8FVo6ZRntk5GHIqYj/dlw==",
+    "NLog.Extensions.Logging/1.0.0-rtm-beta4": {
+      "sha512": "mRnF6TGoQS2Jqpejw0Z6iL7ZXAGwn4DELFXnDvo0L8HEUyzg25HgRvqYhAtGXLxAB7H6kx2+QlHgVHCo8Svfww==",
       "type": "package",
-      "path": "NLog.Extensions.Logging/1.0.0-rtm-beta2",
+      "path": "NLog.Extensions.Logging/1.0.0-rtm-beta4",
       "files": [
-        "NLog.Extensions.Logging.1.0.0-rtm-beta2.nupkg.sha512",
+        "NLog.Extensions.Logging.1.0.0-rtm-beta4.nupkg.sha512",
         "NLog.Extensions.Logging.nuspec",
         "lib/net451/NLog.Extensions.Logging.dll",
         "lib/netstandard1.3/NLog.Extensions.Logging.dll"
@@ -6850,12 +6850,12 @@
         "tools/netfx45/NLog.InstallNLogConfig.exe"
       ]
     },
-    "NLog.Schema/4.4.5": {
-      "sha512": "+9ZFjV0a4u132vfEh/r5Ga9Cnj1DT3vX35D6aoqKnCiAyuKklZvsRGR96D3TxjSPR3/deDVrtiWZvId5/Gu2lw==",
+    "NLog.Schema/4.5.0-alpha04": {
+      "sha512": "brr0FVJWgd5lXnyf/bYxqVNp2G0/dWWkmrbRPDOEip5PdnIlaar4dIrinax6+Q6+AQwQ1lS6ynQK5UNeAJmNGw==",
       "type": "package",
-      "path": "NLog.Schema/4.4.5",
+      "path": "NLog.Schema/4.5.0-alpha04",
       "files": [
-        "NLog.Schema.4.4.5.nupkg.sha512",
+        "NLog.Schema.4.5.0-alpha04.nupkg.sha512",
         "NLog.Schema.nuspec",
         "content/NLog.xsd"
       ]
@@ -12386,8 +12386,11 @@
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Tools >= 1.0.0-preview2-final",
       "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 1.0.0-preview2-final",
-      "NLog.Config >= 4.4.5",
+      "NLog >= 5.0.0-beta06",
+      "NLog.Config >= 4.5.0-alpha04",
+      "NLog.Extensions.Logging >= 1.0.0-rtm-beta4",
       "NLog.InstallNLogConfig >= 2.0.0",
+      "NLog.Schema >= 4.5.0-alpha04",
       "NLog.Web.AspNetCore >= 4.3.1",
       "System.Spatial >= 5.6.4",
       "ZXing.Net >= 0.15.0"

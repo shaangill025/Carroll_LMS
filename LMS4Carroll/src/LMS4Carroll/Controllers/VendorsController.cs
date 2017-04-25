@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler")]
+    [Authorize(Roles = "Admin,ChemUser,BiologyUser")]
     public class VendorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +26,7 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> Index(string vendorstring)
         {
             ViewData["CurrentFilter"] = vendorstring;
-
+            sp_Logging("1-Info", "View", "Successfuly viewed Vendor list", "Success");
             var vendors = from m in _context.Vendors
                           select m;
 
@@ -40,7 +41,6 @@ namespace LMS4Carroll.Controllers
                 else
                 {
                     vendors = vendors.Where(s => s.Address.Contains(vendorstring)
-                                       || s.SNNumber.Contains(vendorstring)
                                        || s.Name.Contains(vendorstring));
                     return View(await vendors.OrderByDescending(s => s.VendorID).ToListAsync());
                 }
@@ -79,12 +79,13 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VendorID,SNNumber,Address,Comments,Name")] Vendor vendor)
+        public async Task<IActionResult> Create([Bind("VendorID,Address,Comments,Name")] Vendor vendor)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(vendor);
                 await _context.SaveChangesAsync();
+                sp_Logging("2-Change", "Create", "User created a Vendor", "Success");
                 return RedirectToAction("Index");
             }
             return View(vendor);
@@ -111,7 +112,7 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VendorID,SNNumber,Address,CAT,Comments,Name,SNNumber")] Vendor vendor)
+        public async Task<IActionResult> Edit(int id, [Bind("VendorID,Address,CAT,Comments,Name")] Vendor vendor)
         {
             if (id != vendor.VendorID)
             {
@@ -124,6 +125,7 @@ namespace LMS4Carroll.Controllers
                 {
                     _context.Update(vendor);
                     await _context.SaveChangesAsync();
+                    sp_Logging("2-Change", "Edit", "User edited a vendor where ID= " + id.ToString(), "Success");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -166,12 +168,39 @@ namespace LMS4Carroll.Controllers
             var vendor = await _context.Vendors.SingleOrDefaultAsync(m => m.VendorID == id);
             _context.Vendors.Remove(vendor);
             await _context.SaveChangesAsync();
+            sp_Logging("3-Remove", "Delete", "User deleted a vendor where ID=" + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 
         private bool VendorExists(int id)
         {
             return _context.Vendors.Any(e => e.VendorID == id);
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Vendors";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

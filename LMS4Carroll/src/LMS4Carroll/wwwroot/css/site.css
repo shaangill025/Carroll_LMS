@@ -3,6 +3,11 @@
     padding-bottom: 20px;
 }
 
+.required:after {
+    color: red;
+    content: '*';
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

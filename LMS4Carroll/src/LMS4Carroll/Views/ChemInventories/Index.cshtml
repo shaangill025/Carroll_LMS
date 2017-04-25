@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Chemical Inventory</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Inventory
@@ -58,7 +58,10 @@
                         <th>
                             @Html.DisplayNameFor(model => model.Units)
                         </th>
-                        @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+                        <th>
+                            @Html.DisplayNameFor(model => model.Department)
+                        </th>
+                        @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                         {
                             <th>
                                 Actions
@@ -100,18 +103,21 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.Units)
                             </td>
-                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Department)
+                            </td>
+                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                             {
                                 <td>
                                     <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.BarcodeID" class="btn btn-info">
-                                        <i class="glyphicon glyphicon-pencil"></i>Edit
-                                    </a>
-                                    <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.BarcodeID" class="btn btn-danger">
-                                        <i class="glyphicon glyphicon-trash"></i>Delete
+                                        <i class="glyphicon glyphicon-pencil"></i>  Edit
                                     </a>
                                     <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.BarcodeID" class="btn btn-info">
-                                        <i class="glyphicon glyphicon-pencil"></i>Details
+                                        <i class="glyphicon glyphicon-search"></i>  Details
                                     </a>
+                                    <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.BarcodeID" class="btn btn-danger loc3">
+                                        <i class="glyphicon glyphicon-trash"></i>  Delete
+                                    </a>                 
                                 </td>
                             }
                         </tr>

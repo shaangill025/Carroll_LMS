@@ -9,6 +9,7 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using ZXing;
 using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
@@ -26,7 +27,7 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> Index(string chemeqpmtString)
         {
             ViewData["CurrentFilter"] = chemeqpmtString;
-
+            sp_Logging("1-Info", "View", "Successfuly viewed Chemical Equipment list", "Success");
             var equipments = from m in _context.ChemicalEquipments.Include(c => c.Location).Include(c => c.Order)
             select m;
 
@@ -95,6 +96,7 @@ namespace LMS4Carroll.Controllers
             {
                 _context.Add(chemEquipment);
                 await _context.SaveChangesAsync();
+                sp_Logging("2-Change", "Create", "User created a chemical equipment", "Success");
                 return RedirectToAction("Index");
             }
             ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "NormalizedStr", chemEquipment.LocationID);
@@ -138,6 +140,7 @@ namespace LMS4Carroll.Controllers
                 {
                     _context.Update(chemEquipment);
                     await _context.SaveChangesAsync();
+                    sp_Logging("2-Change", "Edit", "User edited a Chemical Equipment where ID= " + id.ToString(), "Success");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -182,12 +185,39 @@ namespace LMS4Carroll.Controllers
             var chemEquipment = await _context.ChemicalEquipments.SingleOrDefaultAsync(m => m.ChemEquipmentID == id);
             _context.ChemicalEquipments.Remove(chemEquipment);
             await _context.SaveChangesAsync();
+            sp_Logging("3-Remove", "Delete", "User deleted a Chemical Equipment where ID=" + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 
         private bool ChemEquipmentExists(int id)
         {
             return _context.ChemicalEquipments.Any(e => e.ChemEquipmentID == id);
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Chemical Equipment";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
     }
 }

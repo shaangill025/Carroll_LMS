@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Cage Log</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+            @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Log
@@ -32,13 +32,16 @@
                             @Html.DisplayNameFor(model => model.LogID)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Cage.CageID)
+                            @Html.DisplayNameFor(model => model.Animal.AnimalID)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Cage.NormalizedLocation)
+                            @Html.DisplayNameFor(model => model.Animal.NormalizedLocation)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Cage.Designation)
+                            @Html.DisplayNameFor(model => model.Animal.Designation)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Animal.Name)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Clean)
@@ -64,7 +67,7 @@
                         <th>
                             @Html.DisplayNameFor(model => model.WashComments)
                         </th>
-                        @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
                         {
                             <th>
                                 Actions
@@ -81,13 +84,16 @@
                                 @Html.DisplayFor(modelItem => item.LogID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.CageID)
+                                @Html.DisplayFor(modelItem => item.AnimalID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Cage.NormalizedLocation)
+                                @Html.DisplayFor(modelItem => item.Animal.NormalizedLocation)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Cage.Designation)
+                                @Html.DisplayFor(modelItem => item.Animal.Designation)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Animal.Name)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Clean)
@@ -113,7 +119,7 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.WashComments)
                             </td>
-                    @if (User.IsInRole("Admin") || User.IsInRole("BiologyUser"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
                     {
                         <td>
                             <!--
@@ -121,7 +127,7 @@
                                 <i class="glyphicon glyphicon-pencil"></i>Edit
                             </a>-->
                             <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.LogID" class="btn btn-danger">
-                                <i class="glyphicon glyphicon-trash"></i>Delete
+                                <i class="glyphicon glyphicon-trash"></i>  Delete
                             </a>
                             <!--
                             <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.LogID" class="btn btn-info">

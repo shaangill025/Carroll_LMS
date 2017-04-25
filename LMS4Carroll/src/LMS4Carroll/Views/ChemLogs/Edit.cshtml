@@ -13,20 +13,20 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="LogID" />
                 <div class="form-group">
-                    <label asp-for="BarcodeID" class="col-md-2 control-label"></label>
+                    <label asp-for="BarcodeID" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
                         <input asp-for="BarcodeID" name="BarcodeInput" class="form-control" asp-items="ViewBag.BarcodeID" value="@ViewData["Barcode"]" />
                         <span asp-validation-for="BarcodeID" class="text-danger" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="CourseID" class="col-md-2 control-label"></label>
+                    <label asp-for="CourseID" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
                         <select asp-for="CourseID" name="CourseInput" class="form-control" asp-items="ViewBag.CourseID" value="@ViewData["Course"]"></select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="QtyUsed" class="col-md-2 control-label"></label>
+                    <label asp-for="QtyUsed" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
                         <input asp-for="QtyUsed" name="QtyusedInput" class="form-control" asp-items="ViewBag.Qtyused" value="@ViewData["Qty"]" />
                     </div>

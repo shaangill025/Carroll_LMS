@@ -8,10 +8,11 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using LMS4Carroll.Services;
 using Microsoft.AspNetCore.StaticFiles;
-using NLog.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using NLog.Web;
+using NLog.Extensions.Logging;
 using NLog;
+using NLog.Config;
 
 namespace LMS4Carroll
 {
@@ -23,7 +24,13 @@ namespace LMS4Carroll
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
+            /*
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.MSSqlServer(Configuration["Serilog:ConnectionString"], Configuration["Serilog:TableName"], autoCreateSqlTable: true)
+                .CreateLogger();
+            */
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
@@ -55,19 +62,56 @@ namespace LMS4Carroll
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            /*
+            services.AddSingleton<Serilog.ILogger>(x =>
+            {
+                return new LoggerConfiguration().WriteTo.MSSqlServer(Configuration["Serilog:ConnectionString"], Configuration["Serilog:TableName"], autoCreateSqlTable: true).CreateLogger();
+            });
+            */
+            /*
+            var columnOptions = new ColumnOptions
+            {
+                AdditionalDataColumns = new Collection<DataColumn>
+                {
+                    new DataColumn {DataType = typeof (string), ColumnName = "User"},
+                }
+            };
+
+            columnOptions.Store.Add(StandardColumn.LogEvent);
+            
+            services.AddSingleton<Serilog.ILogger>
+                     (x => new LoggerConfiguration()
+                           .MinimumLevel.Information()
+                           .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                           .MinimumLevel.Override("System", LogEventLevel.Error)
+                           .WriteTo.MSSqlServer(Configuration["Serilog:ConnectionString"]
+                           , Configuration["Serilog:TableName"]
+                           , autoCreateSqlTable: true)
+                           .CreateLogger());
+                            //, LogEventLevel.Information, columnOptions: columnOptions)
+                            
+                           .WriteTo.Seq("http://localhost:5341")
+                           .CreateLogger());
+                           
+                            
+                            .WriteTo.MSSqlServer(Configuration["Serilog:ConnectionString"]
+                            , Configuration["Serilog:TableName"]
+                            , LogEventLevel.Information, columnOptions: columnOptions)
+                            .CreateLogger());
+                            */
             //services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
         {
             //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //loggerFactory.AddDebug();
-            loggerFactory.AddNLog();
-            app.AddNLogWeb();
-            LogManager.Configuration.Variables["LogConnectionStrings"] = Configuration.GetConnectionString("NLogDb");
-            LogManager.Configuration.Variables["configDir"] = "C:\\Users\\sgill\\Desktop\\local-repo\\Carroll_LMS";
-
+            //loggerFactory.AddDebug();           
+            //loggerFactory.AddNLog();
+            //app.AddNLogWeb();
+            //Configuration.GetConnectionString("ConnectionStrings:NLogDb")
+            //LogManager.ConfigurationReloaded += updateConfig;
 
             if (env.IsDevelopment())
             {
@@ -86,6 +130,8 @@ namespace LMS4Carroll
            
             app.UseStaticFiles();
             app.UseIdentity();
+            //loggerFactory.AddSerilog();
+
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
@@ -96,6 +142,10 @@ namespace LMS4Carroll
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
             DbInitializer.Initialize(context);
+        }
+        private void updateConfig(object sender, LoggingConfigurationReloadedEventArgs e)
+        {
+            LogManager.Configuration.Variables["connectionString"] = Configuration.GetConnectionString("NLogDb");
         }
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler,Student")]
+    [Authorize(Roles = "Admin,ChemUser,BiologyUser,Student")]
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -141,13 +141,7 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> Edit(int id, string deptstring, string handlerstring,
             string namestring, string numberstring, int locationinput)
         {
-            ViewData["Location"] = locationinput;
-            ViewData["Name"] = namestring;
-            ViewData["Number"] = numberstring;
-            //ViewData["Instructor"] = instructorstring;
-            ViewData["Handler"] = handlerstring;
-            ViewData["Department"] = deptstring;
-            Course course = new Course();
+            var course = await _context.Course.FirstAsync(m => m.CourseID == id);
             course.Department = deptstring;
             course.Handler = handlerstring;
             course.Name = namestring;
@@ -156,11 +150,7 @@ namespace LMS4Carroll.Controllers
             course.NormalizedStr = deptstring + "-" + numberstring;
             var temp = _context.Locations.First(m => m.LocationID == locationinput);
             course.NormalizedLocation = temp.NormalizedStr;
-
-            if (id != course.CourseID)
-            {
-                return NotFound();
-            }
+            _context.Entry<Course>(course).State = EntityState.Modified;
 
             if (ModelState.IsValid)
             {

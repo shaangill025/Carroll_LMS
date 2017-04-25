@@ -12,7 +12,7 @@
             @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-plus"></i>  Add Invoices
+                    <i class="glyphicon glyphicon-circle-arrow-up"></i>  Add Invoices
                 </a>
             }
         </div><br /><table class="table table-bordered table-striped table-condensed">
@@ -59,10 +59,10 @@
                         {
                             <td>
                                 <a id="addEditApplicationRoleModal" asp-action="Download" asp-route-id="@item.FileDetailID" class="btn btn-info">
-                                    <i class="glyphicon glyphicon-pencil"></i>Download
+                                    <i class="glyphicon glyphicon-circle-arrow-down"></i>  Download
                                 </a>
                                 <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.FileDetailID" class="btn btn-danger">
-                                    <i class="glyphicon glyphicon-trash"></i>Delete
+                                    <i class="glyphicon glyphicon-trash"></i>  Delete
                                 </a>
                             </td>
                         }

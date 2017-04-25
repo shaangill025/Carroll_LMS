@@ -12,7 +12,7 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Chemical ID")]
-        public int ChemID { get; set; }
+        public int? ChemID { get; set; }
 
         [StringLength(50)]
         [Display(Name = "CAT Number")]
@@ -44,5 +44,7 @@ namespace LMS4Carroll.Models
 
         [Display(Name = "SDS")]
         public string SDS { get; set; }
+
+        public virtual ICollection<ChemInventory> ChemInventories { get; set; }
     }
 }

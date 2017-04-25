@@ -8,26 +8,60 @@ using Microsoft.EntityFrameworkCore;
 using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
+using NLog;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler,Student")]
-    public class CagesController : Controller
+    [Authorize(Roles = "Admin,AnimalUser,Student")]
+    [ServiceFilter(typeof(LogFilter))]
+    public class AnimalsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        //private readonly NLog.ILogger _logger;
 
-        public CagesController(ApplicationDbContext context)
+        public AnimalsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
+            //_logger = LogManager.GetLogger("databaseLogger");
+        }
+
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+
+            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            DateTime logged = DateTime.Now;
+            string site = "Animal";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         // GET: Cages
         public async Task<IActionResult> Index(string cagestring)
         {
+            //_logger.Info("Viewed an animal list - AnimalController");
             //var applicationDbContext = _context.Cage.Include(c => c.Location).Include(c => c.Order);
+            sp_Logging("1-Info", "View", "Viewed list of animals", "Success");
             ViewData["CurrentFilter"] = cagestring;
 
-            var cages = from m in _context.Cage.Include(c => c.Location).Include(c => c.Order)
+            var cages = from m in _context.Animal.Include(c => c.Location).Include(c => c.Order)
                              select m;
 
             if (!String.IsNullOrEmpty(cagestring))
@@ -35,8 +69,8 @@ namespace LMS4Carroll.Controllers
                 int forID;
                 if (Int32.TryParse(cagestring, out forID))
                 {
-                    cages = cages.Where(s => s.CageID.Equals(forID));
-                    return View(await cages.OrderByDescending(s => s.CageID).ToListAsync());
+                    cages = cages.Where(s => s.AnimalID.Equals(forID));
+                    return View(await cages.OrderByDescending(s => s.AnimalID).ToListAsync());
                 }
                 else
                 {
@@ -49,14 +83,13 @@ namespace LMS4Carroll.Controllers
                                        || s.Order.PO.Contains(cagestring)
                                        || s.Order.Vendor.Name.Contains(cagestring)
                                        || s.Order.CAT.Contains(cagestring));
-                    return View(await cages.OrderByDescending(s => s.CageID).ToListAsync());
+                    return View(await cages.OrderByDescending(s => s.AnimalID).ToListAsync());
                 }
             }
-                return View(await cages.OrderByDescending(s => s.CageID).ToListAsync());
+                return View(await cages.OrderByDescending(s => s.AnimalID).ToListAsync());
 
         }
 
-        [Authorize(Roles = "Admin")]
         // GET: Cages/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -65,7 +98,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cage = await _context.Cage.SingleOrDefaultAsync(m => m.CageID == id);
+            var cage = await _context.Animal.SingleOrDefaultAsync(m => m.AnimalID == id);
             if (cage == null)
             {
                 return NotFound();
@@ -87,15 +120,17 @@ namespace LMS4Carroll.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DateTime dobinput,string designationstring,string genderstring,int locationinput,int orderinput,string speciesstring)
+        public async Task<IActionResult> Create(DateTime dobinput,string designationstring,string genderstring,int locationinput,int orderinput,string speciesstring, string namestring)
         {
-            @ViewData["DOB"] = dobinput;
-            @ViewData["Designation"] = designationstring;
-            @ViewData["Gender"] = genderstring;
-            @ViewData["Location"] = locationinput;
-            @ViewData["Order"] = orderinput;
-            @ViewData["Species"] = speciesstring;
-            Cage cage = new Cage();
+            //_logger.Info("Attempted to add an animal - AnimalController");
+            ViewData["DOB"] = dobinput;
+            ViewData["Designation"] = designationstring;
+            ViewData["Gender"] = genderstring;
+            ViewData["Location"] = locationinput;
+            ViewData["Order"] = orderinput;
+            ViewData["Species"] = speciesstring;
+            ViewData["Name"] = namestring;
+            Animal cage = new Animal();
             //[Bind("CageID,DOB,Designation,Gender,LocationID,OrderID,Species")] Cage cage
             if (ModelState.IsValid)
             {
@@ -106,8 +141,10 @@ namespace LMS4Carroll.Controllers
                 cage.LocationID = locationinput;
                 cage.OrderID = orderinput;
                 cage.Species = speciesstring;
+                cage.Name = namestring;
                 cage.NormalizedLocation = temp.NormalizedStr;
                 _context.Add(cage);
+                sp_Logging("2-Change", "Create", "User created an Animal where name=" + namestring, "Success");
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -116,7 +153,6 @@ namespace LMS4Carroll.Controllers
             return View(cage);
         }
 
-        [Authorize(Roles = "Admin")]
         // GET: Cages/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -125,7 +161,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cage = await _context.Cage.SingleOrDefaultAsync(m => m.CageID == id);
+            var cage = await _context.Animal.SingleOrDefaultAsync(m => m.AnimalID == id);
             if (cage == null)
             {
                 return NotFound();
@@ -138,18 +174,11 @@ namespace LMS4Carroll.Controllers
         // POST: Cages/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, DateTime dobinput, string designationstring, string genderstring, int locationinput, int orderinput, string speciesstring)
+        public async Task<IActionResult> Edit(int id, DateTime dobinput, string designationstring, string genderstring, int locationinput, int orderinput, string speciesstring, string namestring)
         {
-            @ViewData["DOB"] = dobinput;
-            @ViewData["Designation"] = designationstring;
-            @ViewData["Gender"] = genderstring;
-            @ViewData["Location"] = locationinput;
-            @ViewData["Order"] = orderinput;
-            @ViewData["Species"] = speciesstring;
-            Cage cage = new Cage();
+            Animal cage = await _context.Animal.FirstAsync(s => s.AnimalID == id);
             var temp = _context.Locations.First(m => m.LocationID == locationinput);
             cage.DOB = dobinput;
             cage.Designation = designationstring;
@@ -157,9 +186,10 @@ namespace LMS4Carroll.Controllers
             cage.LocationID = locationinput;
             cage.OrderID = orderinput;
             cage.Species = speciesstring;
+            cage.Name = namestring;
             cage.NormalizedLocation = temp.NormalizedStr;
 
-            if (id != cage.CageID)
+            if (id != cage.AnimalID)
             {
                 return NotFound();
             }
@@ -168,12 +198,13 @@ namespace LMS4Carroll.Controllers
             {
                 try
                 {
+                    sp_Logging("2-Change", "Edit", "User edited an Animal where ID= " + id.ToString(), "Success");
                     _context.Update(cage);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CageExists(cage.CageID))
+                    if (!AnimalExists(cage.AnimalID))
                     {
                         return NotFound();
                     }
@@ -197,7 +228,8 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cage = await _context.Cage.SingleOrDefaultAsync(m => m.CageID == id);
+            sp_Logging("3-Remove", "Delete", "User removed an Animal where ID= " + id.ToString(), "Success");
+            var cage = await _context.Animal.SingleOrDefaultAsync(m => m.AnimalID == id);
             if (cage == null)
             {
                 return NotFound();
@@ -211,15 +243,15 @@ namespace LMS4Carroll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cage = await _context.Cage.SingleOrDefaultAsync(m => m.CageID == id);
-            _context.Cage.Remove(cage);
+            var cage = await _context.Animal.SingleOrDefaultAsync(m => m.AnimalID == id);
+            _context.Animal.Remove(cage);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool CageExists(int id)
+        private bool AnimalExists(int id)
         {
-            return _context.Cage.Any(e => e.CageID == id);
+            return _context.Animal.Any(e => e.AnimalID == id);
         }
     }
 }

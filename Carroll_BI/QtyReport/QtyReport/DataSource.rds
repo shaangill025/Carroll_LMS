@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DataSource">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=cscsql2.carrollu.edu;Initial Catalog=CarrollChemistry</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>9f9fa562-e8f3-4910-96a4-6011bb6c1898</DataSourceID>
+</RptDataSource>

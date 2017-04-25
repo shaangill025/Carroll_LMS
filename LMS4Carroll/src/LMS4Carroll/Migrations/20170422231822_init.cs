@@ -101,8 +101,7 @@ namespace LMS4Carroll.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address = table.Column<string>(maxLength: 50, nullable: false),
                     Comments = table.Column<string>(maxLength: 50, nullable: false),
-                    Name = table.Column<string>(maxLength: 50, nullable: false),
-                    SNNumber = table.Column<string>(maxLength: 50, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -217,7 +216,7 @@ namespace LMS4Carroll.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Department = table.Column<string>(maxLength: 50, nullable: false),
                     Handler = table.Column<string>(maxLength: 50, nullable: true),
-                    LocationID = table.Column<int>(nullable: false),
+                    LocationID = table.Column<int>(nullable: true),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
                     NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
                     NormalizedStr = table.Column<string>(maxLength: 50, nullable: true),
@@ -231,7 +230,7 @@ namespace LMS4Carroll.Migrations
                         column: x => x.LocationID,
                         principalTable: "Locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,6 +260,39 @@ namespace LMS4Carroll.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Animal",
+                columns: table => new
+                {
+                    AnimalID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DOB = table.Column<DateTime>(nullable: false),
+                    DOR = table.Column<DateTime>(nullable: false),
+                    Designation = table.Column<string>(maxLength: 50, nullable: true),
+                    Gender = table.Column<string>(maxLength: 50, nullable: true),
+                    LocationID = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(maxLength: 50, nullable: true),
+                    NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
+                    OrderID = table.Column<int>(nullable: false),
+                    Species = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Animal", x => x.AnimalID);
+                    table.ForeignKey(
+                        name: "FK_Animal_Locations_LocationID",
+                        column: x => x.LocationID,
+                        principalTable: "Locations",
+                        principalColumn: "LocationID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Animal_Orders_OrderID",
+                        column: x => x.OrderID,
+                        principalTable: "Orders",
+                        principalColumn: "OrderID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BioEquipments",
                 columns: table => new
                 {
@@ -270,8 +302,8 @@ namespace LMS4Carroll.Migrations
                     EquipmentName = table.Column<string>(maxLength: 50, nullable: true),
                     InspectionDate = table.Column<DateTime>(nullable: false),
                     InstalledDate = table.Column<DateTime>(nullable: false),
-                    LocationID = table.Column<int>(nullable: false),
-                    OrderID = table.Column<int>(nullable: false),
+                    LocationID = table.Column<int>(nullable: true),
+                    OrderID = table.Column<int>(nullable: true),
                     SerialNumber = table.Column<string>(maxLength: 50, nullable: true),
                     Type = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -283,44 +315,13 @@ namespace LMS4Carroll.Migrations
                         column: x => x.LocationID,
                         principalTable: "Locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BioEquipments_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Cage",
-                columns: table => new
-                {
-                    CageID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    DOB = table.Column<DateTime>(nullable: false),
-                    Designation = table.Column<string>(maxLength: 50, nullable: true),
-                    Gender = table.Column<string>(maxLength: 50, nullable: true),
-                    LocationID = table.Column<int>(nullable: false),
-                    NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
-                    OrderID = table.Column<int>(nullable: false),
-                    Species = table.Column<string>(maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cage", x => x.CageID);
-                    table.ForeignKey(
-                        name: "FK_Cage_Locations_LocationID",
-                        column: x => x.LocationID,
-                        principalTable: "Locations",
-                        principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Cage_Orders_OrderID",
-                        column: x => x.OrderID,
-                        principalTable: "Orders",
-                        principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -333,8 +334,8 @@ namespace LMS4Carroll.Migrations
                     EquipmentName = table.Column<string>(maxLength: 50, nullable: true),
                     InspectionDate = table.Column<DateTime>(nullable: false),
                     InstalledDate = table.Column<DateTime>(nullable: false),
-                    LocationID = table.Column<int>(nullable: false),
-                    OrderID = table.Column<int>(nullable: false),
+                    LocationID = table.Column<int>(nullable: true),
+                    OrderID = table.Column<int>(nullable: true),
                     SerialNumber = table.Column<string>(maxLength: 50, nullable: true),
                     Type = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -346,13 +347,13 @@ namespace LMS4Carroll.Migrations
                         column: x => x.LocationID,
                         principalTable: "Locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChemicalEquipments_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -361,11 +362,12 @@ namespace LMS4Carroll.Migrations
                 {
                     BarcodeID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ChemID = table.Column<int>(nullable: false),
+                    ChemID = table.Column<int>(nullable: true),
+                    Department = table.Column<string>(maxLength: 50, nullable: true),
                     ExpiryDate = table.Column<DateTime>(nullable: false),
-                    LocationID = table.Column<int>(nullable: false),
+                    LocationID = table.Column<int>(nullable: true),
                     NormalizedLocation = table.Column<string>(maxLength: 50, nullable: true),
-                    OrderID = table.Column<int>(nullable: false),
+                    OrderID = table.Column<int>(nullable: true),
                     QtyLeft = table.Column<float>(nullable: false),
                     Units = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -377,19 +379,19 @@ namespace LMS4Carroll.Migrations
                         column: x => x.ChemID,
                         principalTable: "Chemical",
                         principalColumn: "ChemID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChemInventory_Locations_LocationID",
                         column: x => x.LocationID,
                         principalTable: "Locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChemInventory_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -403,7 +405,7 @@ namespace LMS4Carroll.Migrations
                     File = table.Column<byte[]>(nullable: false),
                     FileName = table.Column<string>(maxLength: 255, nullable: true),
                     FileType = table.Column<string>(maxLength: 100, nullable: true),
-                    OrderID = table.Column<int>(nullable: false)
+                    OrderID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -413,7 +415,7 @@ namespace LMS4Carroll.Migrations
                         column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,7 +424,7 @@ namespace LMS4Carroll.Migrations
                 {
                     LogID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CageID = table.Column<int>(nullable: false),
+                    AnimalID = table.Column<int>(nullable: false),
                     Clean = table.Column<bool>(nullable: false),
                     DatetimeCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
                     Food = table.Column<bool>(nullable: false),
@@ -436,10 +438,10 @@ namespace LMS4Carroll.Migrations
                 {
                     table.PrimaryKey("PK_CageLog", x => x.LogID);
                     table.ForeignKey(
-                        name: "FK_CageLog_Cage_CageID",
-                        column: x => x.CageID,
-                        principalTable: "Cage",
-                        principalColumn: "CageID",
+                        name: "FK_CageLog_Animal_AnimalID",
+                        column: x => x.AnimalID,
+                        principalTable: "Animal",
+                        principalColumn: "AnimalID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -472,6 +474,16 @@ namespace LMS4Carroll.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Animal_LocationID",
+                table: "Animal",
+                column: "LocationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animal_OrderID",
+                table: "Animal",
+                column: "OrderID");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName");
@@ -498,19 +510,9 @@ namespace LMS4Carroll.Migrations
                 column: "OrderID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cage_LocationID",
-                table: "Cage",
-                column: "LocationID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cage_OrderID",
-                table: "Cage",
-                column: "OrderID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CageLog_CageID",
+                name: "IX_CageLog_AnimalID",
                 table: "CageLog",
-                column: "CageID");
+                column: "AnimalID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChemicalEquipments_LocationID",
@@ -621,7 +623,7 @@ namespace LMS4Carroll.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Cage");
+                name: "Animal");
 
             migrationBuilder.DropTable(
                 name: "ChemInventory");

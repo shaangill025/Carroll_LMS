@@ -50,7 +50,10 @@
         "Google.Apis.Auth": "1.24.1",
         "NLog.Web.AspNetCore": "4.3.1",
         "NLog.InstallNLogConfig": "2.0.0",
-        "NLog.Config": "4.4.5"   },
+        "NLog.Config": "4.5.0-alpha04",
+        "NLog.Schema": "4.5.0-alpha04",
+        "NLog.Extensions.Logging": "1.0.0-rtm-beta4",
+        "NLog": "5.0.0-beta06"  },
 
     "tools": {
         "BundlerMinifier.Core": "2.0.238",

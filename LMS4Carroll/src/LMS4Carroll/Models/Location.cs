@@ -40,5 +40,10 @@ namespace LMS4Carroll.Models
         public string Address { get; set; }
 
         public virtual ICollection<ChemEquipment> ChemEquipments { get; set; }
+        public virtual ICollection<BioEquipment> BioEquipments { get; set; }
+        public virtual ICollection<ChemInventory> ChemInventories { get; set; }
+        public virtual ICollection<Animal> Animals { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
+
     }
 }
