@@ -360,7 +360,7 @@ namespace LMS4Carroll.Migrations
                 name: "ChemInventory",
                 columns: table => new
                 {
-                    BarcodeID = table.Column<int>(nullable: false)
+                    ChemInventoryId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ChemID = table.Column<int>(nullable: true),
                     Department = table.Column<string>(maxLength: 50, nullable: true),
@@ -373,25 +373,25 @@ namespace LMS4Carroll.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChemInventory", x => x.BarcodeID);
+                    table.PrimaryKey("PK_ChemInventory", x => x.ChemInventoryId);
                     table.ForeignKey(
                         name: "FK_ChemInventory_Chemical_ChemID",
                         column: x => x.ChemID,
                         principalTable: "Chemical",
                         principalColumn: "ChemID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChemInventory_Locations_LocationID",
                         column: x => x.LocationID,
                         principalTable: "Locations",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChemInventory_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,7 +422,7 @@ namespace LMS4Carroll.Migrations
                 name: "CageLog",
                 columns: table => new
                 {
-                    LogID = table.Column<int>(nullable: false)
+                    CageLogId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AnimalID = table.Column<int>(nullable: false),
                     Clean = table.Column<bool>(nullable: false),
@@ -436,7 +436,7 @@ namespace LMS4Carroll.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CageLog", x => x.LogID);
+                    table.PrimaryKey("PK_CageLog", x => x.CageLogId);
                     table.ForeignKey(
                         name: "FK_CageLog_Animal_AnimalID",
                         column: x => x.AnimalID,
@@ -449,28 +449,28 @@ namespace LMS4Carroll.Migrations
                 name: "ChemLog",
                 columns: table => new
                 {
-                    LogID = table.Column<int>(nullable: false)
+                    ChemLogId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    BarcodeID = table.Column<int>(nullable: false),
+                    ChemInventoryId = table.Column<int>(nullable: false),
                     CourseID = table.Column<int>(nullable: false),
                     DatetimeCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
                     QtyUsed = table.Column<float>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChemLog", x => x.LogID);
+                    table.PrimaryKey("PK_ChemLog", x => x.ChemLogId);
                     table.ForeignKey(
-                        name: "FK_ChemLog_ChemInventory_BarcodeID",
-                        column: x => x.BarcodeID,
+                        name: "FK_ChemLog_ChemInventory_ChemInventoryId",
+                        column: x => x.ChemInventoryId,
                         principalTable: "ChemInventory",
-                        principalColumn: "BarcodeID",
+                        principalColumn: "ChemInventoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChemLog_Course_CourseID",
                         column: x => x.CourseID,
                         principalTable: "Course",
                         principalColumn: "CourseID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -540,9 +540,9 @@ namespace LMS4Carroll.Migrations
                 column: "OrderID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChemLog_BarcodeID",
+                name: "IX_ChemLog_ChemInventoryId",
                 table: "ChemLog",
-                column: "BarcodeID");
+                column: "ChemInventoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChemLog_CourseID",

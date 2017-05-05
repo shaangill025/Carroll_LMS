@@ -14,10 +14,10 @@
             <hr />
             <dl class="dl-horizontal">
                 <dt>
-                    @Html.DisplayNameFor(model => model.BarcodeID)
+                    @Html.DisplayNameFor(model => model.ChemInventoryId)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.BarcodeID)
+                    @Html.DisplayFor(model => model.ChemInventoryId)
                 </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.ChemID)
@@ -58,7 +58,7 @@
             </dl>
         </div>
         <div id="detailsbtn">
-            <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model.BarcodeID">Edit</a><br />
+            <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model.ChemInventoryId">Edit</a><br />
             <a asp-action="Index" class="btn btn-default">Back to List</a>
         </div>
         </div>

@@ -9,7 +9,7 @@
             <div class="panel-heading panel-head">Chemicals Log</div>
             <div class="panel-body">
                 <div class="btn-group">
-                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                     {
                         <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                             <i class="glyphicon glyphicon-plus"></i>  Add Log Entry
@@ -29,10 +29,10 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.LogID)
+                                @Html.DisplayNameFor(model => model.ChemLogId)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.BarcodeID)
+                                @Html.DisplayNameFor(model => model.ChemInventoryId)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.Course.Department)
@@ -58,7 +58,7 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.DatetimeCreated)
                             </th>
-                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+                            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                             {
                                 <th>
                                     Actions
@@ -72,10 +72,10 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.LogID)
+                                    @Html.DisplayFor(modelItem => item.ChemLogId)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.BarcodeID)
+                                    @Html.DisplayFor(modelItem => item.ChemInventoryId)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Course.Department)
@@ -102,18 +102,18 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.DatetimeCreated)
                                 </td>
-                                @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
-                                {
+                                @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
+                                { 
                                     <td>    
-                                        <!--                                 
-                                        <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.LogID" class="btn btn-info">
+                                                                        
+                                        <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.ChemLogId" class="btn btn-info">
                                             <i class="glyphicon glyphicon-pencil"></i>Edit
-                                        </a>--> 
-                                        <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.LogID" class="btn btn-danger">
+                                        </a>
+                                        <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.ChemLogId" class="btn btn-danger loc2">
                                             <i class="glyphicon glyphicon-trash"></i>  Delete
                                         </a>
                                         <!--
-                                        <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.LogID" class="btn btn-info">
+                                        <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.ChemLogId" class="btn btn-info">
                                             <i class="glyphicon glyphicon-pencil"></i>Details
                                         </a>-->
                                     </td>

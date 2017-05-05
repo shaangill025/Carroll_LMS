@@ -9,6 +9,7 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -16,50 +17,45 @@ namespace LMS4Carroll.Controllers
     public class ChemInventoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public ChemInventoriesController(ApplicationDbContext context)
+        public ChemInventoriesController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: ChemInventories
-        public async Task<IActionResult> Index(string cheminventorystring)
+        public async Task<IActionResult> Index(string cheminventoryString)
         {
             //var applicationDbContext = _context.ChemInventory.Include(c => c.Chemical).Include(c => c.Location).Include(c => c.Order);
-            ViewData["CurrentFilter"] = cheminventorystring;
+            ViewData["CurrentFilter"] = cheminventoryString;
             sp_Logging("1-Info", "View", "Successfuly viewed Chemical Inventory list", "Success");
-            var inventory = from m in _context.ChemInventory.Include(c => c.Chemical).Include(c => c.Location).Include(c => c.Order)
-                             select m;
 
-            if (!String.IsNullOrEmpty(cheminventorystring))
+
+            //Search Feature
+            if (!String.IsNullOrEmpty(cheminventoryString))
             {
+                var inventory = from m in _context.ChemInventory.Include(c => c.Chemical).Include(c => c.Location).Include(c => c.Order)
+                                select m;
+
                 int forID;
-                if (Int32.TryParse(cheminventorystring, out forID))
+                if (Int32.TryParse(cheminventoryString, out forID))
                 {
-                    inventory = inventory.Where(s => s.BarcodeID.Equals(forID));
-                    return View(await inventory.OrderByDescending(s => s.BarcodeID).ToListAsync());
+                    inventory = inventory.Where(s => s.ChemInventoryId.Equals(forID));
+                    return View(await inventory.OrderByDescending(s => s.ChemInventoryId).ToListAsync());
                 }
                 else
                 {
-                    inventory = inventory.Where(s => s.Chemical.CAS.Contains(cheminventorystring)
-                                       || s.Chemical.Formula.Contains(cheminventorystring)
-                                       || s.Chemical.FormulaName.Contains(cheminventorystring)
-                                       || s.Department.Equals(cheminventorystring)
-                                       || s.Chemical.Hazard.Contains(cheminventorystring)
-                                       || s.Chemical.State.Contains(cheminventorystring)
-                                       || s.Order.Invoice.Contains(cheminventorystring)
-                                       || s.Order.PO.Contains(cheminventorystring)
-                                       || s.Order.Vendor.Name.Contains(cheminventorystring)
-                                       || s.Order.CAT.Contains(cheminventorystring)
-                                       || s.Location.Name.Contains(cheminventorystring)
-                                       || s.Location.NormalizedStr.Contains(cheminventorystring)
-                                       || s.Location.Room.Contains(cheminventorystring));
-                    return View(await inventory.OrderByDescending(s => s.BarcodeID).ToListAsync());
+                    return View(await inventory.OrderByDescending(s => s.ChemInventoryId).ToListAsync());
                 }
             }
-
-            // var applicationDbContext = _context.bioicalEquipments.Include(c => c.Location).Include(c => c.Order);
-            return View(await inventory.OrderByDescending(s => s.BarcodeID).ToListAsync());
+            else
+            {
+                var inventory = from m in _context.ChemInventory.Include(c => c.Chemical).Include(c => c.Location).Include(c => c.Order).Take(50)
+                                select m;
+                return View(await inventory.OrderByDescending(s => s.ChemInventoryId).ToListAsync());
+            }
             //return View(await applicationDbContext.ToListAsync());
         }
 
@@ -71,7 +67,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.BarcodeID == id);
+            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.ChemInventoryId == id);
             if (chemInventory == null)
             {
                 return NotFound();
@@ -90,16 +86,12 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: ChemInventories/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
+        //[Bind("ChemInventoryId,OrderID,LocationID,ChemID,Units,QtyLeft,ExpiryDate")] ChemInventory chemInventory
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? formulainput, DateTime dateinput, int? storageinput, int? orderinput, float qtyinput, string unitstring, string deptstring)
-        {
-            //[Bind("BarcodeID,OrderID,LocationID,ChemID,Units,QtyLeft,ExpiryDate")] ChemInventory chemInventory
-            //int formulainput,DateTime dateinput,int storageinput,int orderinput,float qtyinput,string unitstring
-            //int formulainput, DateTime dateinput, int storageinput, int orderinput, float qtyinput, string unitstring
-            
+        public async Task<IActionResult> Create(int? formulainput, DateTime dateinput, int? storageinput, int? orderinput, string cat, string lot, float qtyinput, string unitstring, string deptstring)
+        { 
             ViewData["Formula"] = formulainput;
             ViewData["ExpiryDate"] = dateinput;
             ViewData["StorageCode"] = storageinput;
@@ -107,6 +99,9 @@ namespace LMS4Carroll.Controllers
             ViewData["Qty"] = qtyinput;
             ViewData["Unit"] = unitstring;
             ViewData["Department"] = deptstring;
+            ViewData["CAT"] = cat;
+            ViewData["LOT"] = lot;
+
             ChemInventory chemInventory = null;
 
             if (ModelState.IsValid)
@@ -122,6 +117,8 @@ namespace LMS4Carroll.Controllers
                 chemInventory.QtyLeft = qtyinput;
                 chemInventory.Units = unitstring;
                 chemInventory.Department = deptstring;
+                chemInventory.CAT = cat;
+                chemInventory.LOT = lot;
                 var temp = _context.Locations.First(m => m.LocationID == storageinput);
                 chemInventory.NormalizedLocation = temp.StorageCode;
                 
@@ -144,7 +141,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.BarcodeID == id);
+            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.ChemInventoryId == id);
             if (chemInventory == null)
             {
                 return NotFound();
@@ -156,16 +153,15 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: ChemInventories/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
+        //[Bind("ChemInventoryId,OrderID,LocationID,ChemID,Units,QtyLeft,ExpiryDate")] ChemInventory chemInventory
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int? formulainput, DateTime dateinput, int? storageinput, int? orderinput, float qtyinput, string unitstring, string deptstring)
+        public async Task<IActionResult> Edit(int id, int? formulainput, DateTime dateinput, int? storageinput, int? orderinput, string cat, string lot, float qtyinput, string unitstring, string deptstring)
         {
-            //[Bind("BarcodeID,OrderID,LocationID,ChemID,Units,QtyLeft,ExpiryDate")] ChemInventory chemInventory
-            ChemInventory chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(p => p.BarcodeID == id);
+            ChemInventory chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(p => p.ChemInventoryId == id);
 
-            if (id != chemInventory.BarcodeID)
+            if (id != chemInventory.ChemInventoryId)
             {
                 return NotFound();
             }
@@ -181,6 +177,8 @@ namespace LMS4Carroll.Controllers
                     chemInventory.QtyLeft = qtyinput;
                     chemInventory.Units = unitstring;
                     chemInventory.Department = deptstring;
+                    chemInventory.CAT = cat;
+                    chemInventory.LOT = lot;
                     var temp = _context.Locations.First(m => m.LocationID == storageinput);
                     chemInventory.NormalizedLocation = temp.StorageCode;
                     _context.Update(chemInventory);
@@ -189,7 +187,7 @@ namespace LMS4Carroll.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ChemInventoryExists(chemInventory.BarcodeID))
+                    if (!ChemInventoryExists(chemInventory.ChemInventoryId))
                     {
                         return NotFound();
                     }
@@ -214,7 +212,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.BarcodeID == id);
+            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.ChemInventoryId == id);
             if (chemInventory == null)
             {
                 return NotFound();
@@ -228,27 +226,32 @@ namespace LMS4Carroll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.BarcodeID == id);
+            var chemInventory = await _context.ChemInventory.SingleOrDefaultAsync(m => m.ChemInventoryId == id);
             _context.ChemInventory.Remove(chemInventory);
             await _context.SaveChangesAsync();
             sp_Logging("3-Remove", "Delete", "User deleted a Chemical inventory item where ID=" + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 
-        private bool ChemInventoryExists(int id)
+        private bool ChemInventoryExists(int? id)
         {
-            return _context.ChemInventory.Any(e => e.BarcodeID == id);
+            return _context.ChemInventory.Any(e => e.ChemInventoryId == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Chemical Inventory";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "ChemInventory";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

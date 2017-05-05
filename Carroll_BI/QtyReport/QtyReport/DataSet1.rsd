@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>DataSource</DataSourceReference>
+      <CommandText>SELECT        ChemInventory.ChemInventoryId, Chemical.CAS, Chemical.CAT, Chemical.FormulaName, ChemInventory.NormalizedLocation, Orders.Invoice, Orders.PO, 
+                         Vendors.Name, ChemInventory.QtyLeft, ChemInventory.Units, ChemInventory.ExpiryDate
+FROM            ChemInventory INNER JOIN
+                         Chemical ON ChemInventory.ChemID = Chemical.ChemID INNER JOIN
+                         Orders ON ChemInventory.OrderID = Orders.OrderID INNER JOIN
+                         Vendors ON Orders.VendorID = Vendors.VendorID
+WHERE        (ChemInventory.QtyLeft &lt; 30)</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="ChemInventoryId">
+        <DataField>ChemInventoryId</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="CAS">
+        <DataField>CAS</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CAT">
+        <DataField>CAT</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="FormulaName">
+        <DataField>FormulaName</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="NormalizedLocation">
+        <DataField>NormalizedLocation</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Invoice">
+        <DataField>Invoice</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="PO">
+        <DataField>PO</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Name">
+        <DataField>Name</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="QtyLeft">
+        <DataField>QtyLeft</DataField>
+        <rd:TypeName>System.Single</rd:TypeName>
+      </Field>
+      <Field Name="Units">
+        <DataField>Units</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="ExpiryDate">
+        <DataField>ExpiryDate</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

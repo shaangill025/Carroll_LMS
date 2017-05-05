@@ -35,6 +35,14 @@ namespace LMS4Carroll.Models
         [Display(Name = "Gender")]
         public string Gender { get; set; }
 
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "CAT Number")]
+        public string CAT { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Lot #")]
+        public string LOT { get; set; }
+
         [DataType(DataType.Date)]
         [DefaultValue("01/01/1900")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

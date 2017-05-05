@@ -29,7 +29,7 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.LogID)
+                            @Html.DisplayNameFor(model => model.CageLogId)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Animal.AnimalID)
@@ -81,7 +81,7 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => item.LogID)
+                                @Html.DisplayFor(modelItem => item.CageLogId)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.AnimalID)
@@ -121,16 +121,15 @@
                             </td>
                     @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
                     {
-                        <td>
-                            <!--
-                            <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.LogID" class="btn btn-info">
+                        <td>                            
+                            <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.CageLogId" class="btn btn-info">
                                 <i class="glyphicon glyphicon-pencil"></i>Edit
-                            </a>-->
-                            <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.LogID" class="btn btn-danger">
+                            </a>
+                            <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.CageLogId" class="btn btn-danger loc2">
                                 <i class="glyphicon glyphicon-trash"></i>  Delete
                             </a>
                             <!--
-                            <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.LogID" class="btn btn-info">
+                            <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.CageLogId" class="btn btn-info">
                                 <i class="glyphicon glyphicon-pencil"></i>Details
                             </a>-->
                         </td>

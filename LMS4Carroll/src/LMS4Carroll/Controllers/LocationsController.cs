@@ -9,17 +9,20 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,ChemUser,BiologyUser,Student")]
+    [Authorize(Roles = "Admin,ChemUser,BiologyUser,AnimalUser,Student")]
     public class LocationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public LocationsController(ApplicationDbContext context)
+        public LocationsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: Locations
@@ -54,8 +57,7 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Locations/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string addressstring,string namestring,string typestring,string roomstring,string storagestring)
@@ -101,13 +103,14 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Locations/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Roles = "Admin,Handler")]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationID,Address,Name,StorageCode,Room,Type")] Location location)
+        public async Task<IActionResult> Edit(int id, string addressstring, string namestring, string typestring, string roomstring, string storagestring)
         {
+            Location location = await _context.Locations.FirstAsync(m => m.LocationID == id);
+
             if (id != location.LocationID)
             {
                 return NotFound();
@@ -117,9 +120,12 @@ namespace LMS4Carroll.Controllers
             {
                 try
                 {
-                    string name = location.Name;
-                    string room = location.Room;
-                    location.NormalizedStr = name + "-" + room;
+                    location.Address = addressstring;
+                    location.Name = namestring;
+                    location.Type = typestring;
+                    location.Room = roomstring;
+                    location.NormalizedStr = namestring + "-" + roomstring;
+                    location.StorageCode = storagestring;
                     _context.Update(location);
                     await _context.SaveChangesAsync();
                     sp_Logging("2-Change", "Edit", "User edited a location where ID= " + id.ToString(), "Success");
@@ -176,15 +182,20 @@ namespace LMS4Carroll.Controllers
             return _context.Locations.Any(e => e.LocationID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
             string site = "Locations";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

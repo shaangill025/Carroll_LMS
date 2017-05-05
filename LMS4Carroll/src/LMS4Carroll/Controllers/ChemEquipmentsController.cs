@@ -10,6 +10,7 @@ using LMS4Carroll.Models;
 using ZXing;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -17,47 +18,48 @@ namespace LMS4Carroll.Controllers
     public class ChemEquipmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public ChemEquipmentsController(ApplicationDbContext context)
+        public ChemEquipmentsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: ChemEquipments
-        public async Task<IActionResult> Index(string chemeqpmtString)
-        {
-            ViewData["CurrentFilter"] = chemeqpmtString;
+        public async Task<IActionResult> Index(string equipmentString) { 
+            ViewData["CurrentFilter"] = equipmentString;
             sp_Logging("1-Info", "View", "Successfuly viewed Chemical Equipment list", "Success");
-            var equipments = from m in _context.ChemicalEquipments.Include(c => c.Location).Include(c => c.Order)
-            select m;
 
-            if (!String.IsNullOrEmpty(chemeqpmtString))
+
+            //Search Feature
+            if (!String.IsNullOrEmpty(equipmentString))
             {
+                var equipments = from m in _context.ChemicalEquipments.Include(c => c.Location).Include(c => c.Order)
+                                 select m;
                 int forID;
-                if (Int32.TryParse(chemeqpmtString, out forID))
+                if (Int32.TryParse(equipmentString, out forID))
                 {
-                    equipments = equipments.Where(s => s.ChemEquipmentID.Equals(forID));
+                    equipments = equipments.Where(s => s.ChemEquipmentID.Equals(forID)
+                                            || s.OrderID.Equals(forID));
                     return View(await equipments.OrderByDescending(s => s.ChemEquipmentID).ToListAsync());
                 }
-                else
-                {
-                    equipments = equipments.Where(s => s.EquipmentName.Contains(chemeqpmtString)
-                                       || s.EquipmentModel.Contains(chemeqpmtString)
-                                       || s.SerialNumber.Contains(chemeqpmtString)
-                                       || s.Location.NormalizedStr.Contains(chemeqpmtString)
-                                       || s.LocationID.Equals(forID)
-                                       || s.OrderID.Equals(forID)
-                                       || s.Type.Contains(chemeqpmtString)
-                                       || s.Order.VendorID.Equals(forID)
-                                       || s.Order.Vendor.Name.Contains(chemeqpmtString)
-                                       || s.Location.NormalizedStr.Contains(chemeqpmtString)
-                                       || s.Location.Room.Contains(chemeqpmtString));
-                    return View(await equipments.OrderByDescending(s => s.ChemEquipmentID).ToListAsync());
-                }
+
+                equipments = equipments.Where(s => s.EquipmentName.Contains(equipmentString)
+                                    || s.EquipmentModel.Contains(equipmentString)
+                                    || s.SerialNumber.Contains(equipmentString)
+                                    || s.Location.NormalizedStr.Contains(equipmentString)
+                                    || s.LOT.Contains(equipmentString)
+                                    || s.CAT.Contains(equipmentString));
+                return View(await equipments.OrderByDescending(s => s.ChemEquipmentID).ToListAsync());
             }
 
-           // var applicationDbContext = _context.ChemicalEquipments.Include(c => c.Location).Include(c => c.Order);
-            return View(await equipments.OrderByDescending(s => s.ChemEquipmentID).ToListAsync());
+            else
+            {
+                var equipments = from m in _context.ChemicalEquipments.Include(c => c.Location).Include(c => c.Order).Take(40)
+                                 select m;
+                return View(await equipments.OrderByDescending(s => s.ChemEquipmentID).ToListAsync());
+            }
         }
 
         // GET: ChemEquipments/Details/5
@@ -86,11 +88,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: ChemEquipments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled bind properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
+        public async Task<IActionResult> Create([Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,LOT,CAT,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
         {
             if (ModelState.IsValid)
             {
@@ -123,11 +124,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: ChemEquipments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled bind properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
+        public async Task<IActionResult> Edit(int id, [Bind("ChemEquipmentID,SerialNumber,InstalledDate,InspectionDate,CAT,LOT,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] ChemEquipment chemEquipment)
         {
             if (id != chemEquipment.ChemEquipmentID)
             {
@@ -194,15 +194,20 @@ namespace LMS4Carroll.Controllers
             return _context.ChemicalEquipments.Any(e => e.ChemEquipmentID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Chemical Equipment";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "ChemEquipments";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

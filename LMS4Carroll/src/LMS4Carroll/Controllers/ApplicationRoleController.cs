@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -15,10 +16,12 @@ namespace LMS4Carroll.Controllers
     public class ApplicationRoleController : Controller
     {
         private readonly RoleManager<ApplicationRole> roleManager;
+        private IConfiguration configuration;
 
-        public ApplicationRoleController(RoleManager<ApplicationRole> roleManager)
+        public ApplicationRoleController(RoleManager<ApplicationRole> roleManager, IConfiguration config)
         {
             this.roleManager = roleManager;
+            this.configuration = config;
         }
 
         [HttpGet]
@@ -60,7 +63,7 @@ namespace LMS4Carroll.Controllers
                 ApplicationRole applicationRole = isExist ? await roleManager.FindByIdAsync(id) :
                new ApplicationRole
                {
-                   CreatedDate = DateTime.UtcNow
+                   CreatedDate = DateTime.Now
                };
                 sp_Logging("2-Change", "Add/Edit", "Successfuly added or edited a Role", "Success");
                 applicationRole.Name = model.RoleName;
@@ -110,15 +113,20 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "RolesDB";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "ApplicationRoles";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

@@ -7,11 +7,16 @@
       <FullPath>DataSource.rds</FullPath>
     </ProjectItem>
   </DataSources>
-  <DataSets />
+  <DataSets>
+    <ProjectItem>
+      <Name>DataSet1.rsd</Name>
+      <FullPath>DataSet1.rsd</FullPath>
+    </ProjectItem>
+  </DataSets>
   <Reports>
     <ProjectItem>
-      <Name>Qty_Left.rdl</Name>
-      <FullPath>Qty_Left.rdl</FullPath>
+      <Name>QtyLeftReport.rdl</Name>
+      <FullPath>QtyLeftReport.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>
@@ -20,8 +25,8 @@
       <Platform>Win32</Platform>
       <Options>
         <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2016</TargetServerVersion>
-        <TargetServerURL>http://localhost/reportserver</TargetServerURL>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://cscsql2.carrollu.edu/reportserver</TargetServerURL>
         <TargetFolder>QtyReport</TargetFolder>
         <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
         <TargetDatasetFolder>Datasets</TargetDatasetFolder>

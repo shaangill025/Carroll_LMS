@@ -18,15 +18,12 @@ namespace LMS4Carroll.Models
         [ForeignKey("Vendor")]
         public int VendorID { get; set; }
         public virtual Vendor Vendor { get; set; }
-
+        /*
         [StringLength(50)]
         [Display(Name = "Item Type")]
         public string Type { get; set; }
-
-        [StringLength(50, MinimumLength = 3)]
-        [Display(Name = "CAT Number")]
-        public string CAT { get; set; }
-
+        */
+        
         [Required]
         [StringLength(50, MinimumLength = 3)]
         [Display(Name = "Invoice #")]

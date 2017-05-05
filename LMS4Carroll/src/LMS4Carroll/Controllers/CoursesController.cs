@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace LMS4Carroll.Controllers
 {
@@ -15,16 +17,50 @@ namespace LMS4Carroll.Controllers
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public CoursesController(ApplicationDbContext context)
+        public CoursesController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
+        }
+
+        //Custom Loggin Solution
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "Course";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
         }
 
         // GET: Courses
         public async Task<IActionResult> Index(string coursestring)
         {
             ViewData["CurrentFilter"] = coursestring;
+            sp_Logging("1-Info", "View", "Viewed Course List Successfuly", "Success");
 
             var courses = from m in _context.Course.Include(c => c.Location)
                              select m;
@@ -63,6 +99,7 @@ namespace LMS4Carroll.Controllers
             {
                 return NotFound();
             }
+            sp_Logging("1-Info", "View", "Viewed Course details where CourseId = " + id.ToString(), "Success");
 
             var course = await _context.Course.SingleOrDefaultAsync(m => m.CourseID == id);
             if (course == null)
@@ -82,14 +119,13 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Courses/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
+        //[Bind("CourseID,Department,Handler,Instructor,Name,Number")] Course course
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string deptstring,string handlerstring,
             string namestring, string numberstring, int locationinput)
         {
-            //[Bind("CourseID,Department,Handler,Instructor,Name,Number")] Course course
             ViewData["Location"] = locationinput;
             ViewData["Name"] = namestring;
             ViewData["Number"] = numberstring;
@@ -109,6 +145,7 @@ namespace LMS4Carroll.Controllers
                 course.NormalizedLocation = temp.NormalizedStr;
                 _context.Add(course);
                 await _context.SaveChangesAsync();
+                sp_Logging("2-Create", "Create", "Created Course Successfuly where Course is " + deptstring + "-" + numberstring, "Success");
                 return RedirectToAction("Index");
             }
             ViewData["LocationName"] = new SelectList(_context.Locations, "LocationID", "NormalizedStr", course.LocationID);
@@ -134,8 +171,8 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Courses/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
+        //[Bind("CourseID,Department,Handler,Instructor,Name,Number")] Course course
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string deptstring, string handlerstring,
@@ -157,6 +194,7 @@ namespace LMS4Carroll.Controllers
                 try
                 {
                     _context.Update(course);
+                    sp_Logging("2-Edit", "Edit", "Edited Course Successfuly where CourseId = " + id.ToString(), "Success");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -201,6 +239,7 @@ namespace LMS4Carroll.Controllers
             var course = await _context.Course.SingleOrDefaultAsync(m => m.CourseID == id);
             _context.Course.Remove(course);
             await _context.SaveChangesAsync();
+            sp_Logging("3-Remove", "Delete", "Deleted Course Successfuly where CourseId = " + id.ToString(), "Success");
             return RedirectToAction("Index");
         }
 

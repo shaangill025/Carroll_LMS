@@ -8,8 +8,8 @@ using LMS4Carroll.Data;
 namespace LMS4Carroll.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170422231822_init")]
-    partial class init
+    [Migration("20170502192246_changes")]
+    partial class changes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,6 +22,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("AnimalID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<DateTime>("DOB");
 
                     b.Property<DateTime>("DOR");
@@ -30,6 +33,9 @@ namespace LMS4Carroll.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("Gender")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("LOT")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<int>("LocationID");
@@ -143,6 +149,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("BioEquipmentID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<string>("EquipmentModel")
                         .HasAnnotation("MaxLength", 50);
 
@@ -152,6 +161,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<DateTime>("InspectionDate");
 
                     b.Property<DateTime>("InstalledDate");
+
+                    b.Property<string>("LOT")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<int?>("LocationID");
 
@@ -174,7 +186,7 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.CageLog", b =>
                 {
-                    b.Property<int>("LogID")
+                    b.Property<int>("CageLogId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AnimalID");
@@ -199,7 +211,7 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<bool>("Washed");
 
-                    b.HasKey("LogID");
+                    b.HasKey("CageLogId");
 
                     b.HasIndex("AnimalID");
 
@@ -211,6 +223,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<int>("ChemEquipmentID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<string>("EquipmentModel")
                         .HasAnnotation("MaxLength", 50);
 
@@ -220,6 +235,9 @@ namespace LMS4Carroll.Migrations
                     b.Property<DateTime>("InspectionDate");
 
                     b.Property<DateTime>("InstalledDate");
+
+                    b.Property<string>("LOT")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<int?>("LocationID");
 
@@ -275,8 +293,11 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.ChemInventory", b =>
                 {
-                    b.Property<int>("BarcodeID")
+                    b.Property<int?>("ChemInventoryId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CAT")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<int?>("ChemID");
 
@@ -284,6 +305,9 @@ namespace LMS4Carroll.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<DateTime>("ExpiryDate");
+
+                    b.Property<string>("LOT")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<int?>("LocationID");
 
@@ -297,7 +321,7 @@ namespace LMS4Carroll.Migrations
                     b.Property<string>("Units")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.HasKey("BarcodeID");
+                    b.HasKey("ChemInventoryId");
 
                     b.HasIndex("ChemID");
 
@@ -310,10 +334,10 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.ChemLog", b =>
                 {
-                    b.Property<int>("LogID")
+                    b.Property<int>("ChemLogId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("BarcodeID");
+                    b.Property<int?>("ChemInventoryId");
 
                     b.Property<int>("CourseID");
 
@@ -322,9 +346,9 @@ namespace LMS4Carroll.Migrations
 
                     b.Property<float>("QtyUsed");
 
-                    b.HasKey("LogID");
+                    b.HasKey("ChemLogId");
 
-                    b.HasIndex("BarcodeID");
+                    b.HasIndex("ChemInventoryId");
 
                     b.HasIndex("CourseID");
 
@@ -396,7 +420,7 @@ namespace LMS4Carroll.Migrations
 
             modelBuilder.Entity("LMS4Carroll.Models.Location", b =>
                 {
-                    b.Property<int>("LocationID")
+                    b.Property<int?>("LocationID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Address")
@@ -433,9 +457,6 @@ namespace LMS4Carroll.Migrations
                     b.Property<int?>("OrderID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CAT")
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<string>("Invoice")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
@@ -449,9 +470,6 @@ namespace LMS4Carroll.Migrations
                     b.Property<DateTime>("Recievedate");
 
                     b.Property<string>("Status")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("Type")
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<int>("VendorID");
@@ -633,8 +651,7 @@ namespace LMS4Carroll.Migrations
                 {
                     b.HasOne("LMS4Carroll.Models.ChemInventory", "ChemInventory")
                         .WithMany("ChemLogs")
-                        .HasForeignKey("BarcodeID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ChemInventoryId");
 
                     b.HasOne("LMS4Carroll.Models.Course", "Course")
                         .WithMany("ChemLogs")

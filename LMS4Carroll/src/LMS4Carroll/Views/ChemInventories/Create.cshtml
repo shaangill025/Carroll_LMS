@@ -38,9 +38,21 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label asp-for="CAT" class="col-md-2 control-label required"></label>
+                    <div class="col-md-10">
+                        <input asp-for="CAT" name="Cat" class="form-control" value="@ViewData["CAT"]"></input>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LOT" class="col-md-2 control-label required"></label>
+                    <div class="col-md-10">
+                        <input asp-for="LOT" name="Lot" class="form-control" value="@ViewData["LOT"]"/>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label asp-for="QtyLeft" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
-                        <input asp-for="QtyLeft" name="QtyInput" class="form-control" value="@ViewData["Qty"]"/>
+                        <input asp-for="QtyLeft" name="QtyInput" class="form-control" />
                         <span asp-validation-for="QtyLeft" class="text-danger" />
                     </div>
                 </div>

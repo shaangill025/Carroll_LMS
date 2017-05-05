@@ -55,7 +55,8 @@ namespace LMS4Carroll
                 .AddDefaultTokenProviders();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
- 
+            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddMvc();
             services.AddScoped<LogFilter>();
 
@@ -121,7 +122,9 @@ namespace LMS4Carroll
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDatabaseErrorPage();
+                app.UseBrowserLink();
+                //app.UseExceptionHandler("/Home/Error");
             }
 
 
@@ -141,7 +144,7 @@ namespace LMS4Carroll
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            DbInitializer.Initialize(context);
+            //DbInitializer.Initialize(context);
         }
         private void updateConfig(object sender, LoggingConfigurationReloadedEventArgs e)
         {

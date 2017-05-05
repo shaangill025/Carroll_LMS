@@ -9,17 +9,20 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,ChemUser,BiologyUser")]
+    [Authorize(Roles = "Admin,ChemUser,BiologyUser,AnimalUser")]
     public class VendorsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public VendorsController(ApplicationDbContext context)
+        public VendorsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: Vendors
@@ -30,6 +33,7 @@ namespace LMS4Carroll.Controllers
             var vendors = from m in _context.Vendors
                           select m;
 
+            //Search Feature
             if (!String.IsNullOrEmpty(vendorstring))
             {
                 int forID;
@@ -46,7 +50,6 @@ namespace LMS4Carroll.Controllers
                 }
             }
 
-            // var applicationDbContext = _context.bioicalEquipments.Include(c => c.Location).Include(c => c.Order);
             return View(await vendors.OrderByDescending(s => s.VendorID).ToListAsync());
             //return View(await _context.Vendors.ToListAsync());
         }
@@ -75,8 +78,7 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Vendors/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, used binding properties
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("VendorID,Address,Comments,Name")] Vendor vendor)
@@ -108,8 +110,7 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Vendors/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, used binding properties
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("VendorID,Address,CAT,Comments,Name")] Vendor vendor)
@@ -177,15 +178,20 @@ namespace LMS4Carroll.Controllers
             return _context.Vendors.Any(e => e.VendorID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
             string site = "Vendors";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

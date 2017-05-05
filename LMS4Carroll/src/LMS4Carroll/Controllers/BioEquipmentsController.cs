@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -16,47 +17,53 @@ namespace LMS4Carroll.Controllers
     public class BioEquipmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public BioEquipmentsController(ApplicationDbContext context)
+        public BioEquipmentsController(ApplicationDbContext context, IConfiguration config)
         {
             _context = context;
+            this.configuration = config;
         }
 
         // GET: BioEquipments
-        public async Task<IActionResult> Index(string bioeqpmtString)
+        public async Task<IActionResult> Index(string equipmentString)
         {
-            ViewData["CurrentFilter"] = bioeqpmtString;
+            ViewData["CurrentFilter"] = equipmentString;
             sp_Logging("1-Info", "View", "Successfuly viewed Biological Equipment list", "Success");
-            var equipments = from m in _context.BioEquipments.Include(c => c.Location).Include(c => c.Order)
-                             select m;
 
-            if (!String.IsNullOrEmpty(bioeqpmtString))
+            //Search Feature
+            if (!String.IsNullOrEmpty(equipmentString))
             {
+                var equipments = from m in _context.BioEquipments.Include(c => c.Location).Include(c => c.Order)
+                                 select m;
+
                 int forID;
-                if (Int32.TryParse(bioeqpmtString, out forID))
+                if (Int32.TryParse(equipmentString, out forID))
                 {
-                    equipments = equipments.Where(s => s.BioEquipmentID.Equals(forID));
+                    equipments = equipments.Where(s => s.BioEquipmentID.Equals(forID)
+                                            || s.LocationID.Equals(forID)
+                                            || s.OrderID.Equals(forID));
                     return View(await equipments.OrderByDescending(s => s.BioEquipmentID).ToListAsync());
                 }
                 else
                 {
-                    equipments = equipments.Where(s => s.EquipmentName.Contains(bioeqpmtString)
-                                       || s.EquipmentModel.Contains(bioeqpmtString)
-                                       || s.LocationID.Equals(forID)
-                                       || s.SerialNumber.Contains(bioeqpmtString)
-                                       || s.Location.NormalizedStr.Contains(bioeqpmtString)
-                                       || s.OrderID.Equals(forID)
-                                       || s.Type.Contains(bioeqpmtString)
-                                       || s.Order.VendorID.Equals(forID)
-                                       || s.Order.Vendor.Name.Contains(bioeqpmtString)
-                                       || s.Location.Room.Contains(bioeqpmtString)
-                                       || s.Location.NormalizedStr.Contains(bioeqpmtString));
+                    equipments = equipments.Where(s => s.EquipmentName.Contains(equipmentString)
+                                            || s.EquipmentModel.Contains(equipmentString)
+                                            || s.SerialNumber.Equals(equipmentString)
+                                            || s.LOT.Equals(equipmentString)
+                                            || s.CAT.Equals(equipmentString)
+                                            || s.Type.Contains(equipmentString));
                     return View(await equipments.OrderByDescending(s => s.BioEquipmentID).ToListAsync());
                 }
             }
 
-            // var applicationDbContext = _context.bioicalEquipments.Include(c => c.Location).Include(c => c.Order);
-            return View(await equipments.OrderByDescending(s => s.BioEquipmentID).ToListAsync());
+            else
+            {
+                var equipments = from m in _context.BioEquipments.Include(c => c.Location).Include(c => c.Order).Take(40)
+                                 select m;
+
+                return View(await equipments.OrderByDescending(s => s.BioEquipmentID).ToListAsync());
+            }
         }
 
         // GET: BioEquipments/Details/5
@@ -85,11 +92,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: BioEquipments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled bind properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
+        public async Task<IActionResult> Create([Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,CAT,LOT,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
         {
             if (ModelState.IsValid)
             {
@@ -122,11 +128,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: BioEquipments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled bind properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
+        public async Task<IActionResult> Edit(int id, [Bind("BioEquipmentID,SerialNumber,InstalledDate,InspectionDate,CAT,LOT,EquipmentModel,EquipmentName,LocationID,OrderID,Type")] BioEquipment bioEquipment)
         {
             if (id != bioEquipment.BioEquipmentID)
             {
@@ -193,15 +198,20 @@ namespace LMS4Carroll.Controllers
             return _context.BioEquipments.Any(e => e.BioEquipmentID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Biological Equipment";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "BioEquipments";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

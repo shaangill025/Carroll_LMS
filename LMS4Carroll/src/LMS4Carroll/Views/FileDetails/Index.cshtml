@@ -53,7 +53,11 @@
                             @Html.DisplayFor(modelItem => item.FileType)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.OrderID)
+                            @{string orderLink = "http://lms4carroll.azurewebsites.net/Orders/Details/";}
+                            @{var orderint = item.OrderID;}
+                            @{string link = orderLink + orderint;}
+
+                            <a target="_blank" href="@link">@Html.DisplayFor(modelItem => item.OrderID)</a>
                         </td>                      
                         @if (User.IsInRole("Admin") || User.IsInRole("Handler"))
                         {

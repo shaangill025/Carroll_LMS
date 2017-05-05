@@ -12,7 +12,7 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Location ID")]
-        public int LocationID { get; set; }
+        public int? LocationID { get; set; }
 
         [Required]
         [Display(Name = "Building")]

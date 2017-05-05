@@ -9,7 +9,7 @@
     <div class="panel-heading panel-head">Chemicals</div>
     <div class="panel-body">
         <div class="btn-group">
-            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+            @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
             {
                 <a id="createRoleModal" asp-action="Create" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>  Add Chemical
@@ -35,9 +35,6 @@
                         @Html.DisplayNameFor(model => model.CAS)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.CAT)
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.Formula)
                     </th>
                     <th>
@@ -55,7 +52,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.State)
                     </th>
-                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                     {
                         <th>
                             Actions
@@ -75,9 +72,6 @@
                             @Html.DisplayFor(modelItem => item.CAS)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CAT)
-                        </td>
-                        <td>
                             @Html.DisplayFor(modelItem => item.Formula)
                         </td>
                         <td>
@@ -95,8 +89,8 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.State)
                         </td>
-                       @if (User.IsInRole("Admin") || User.IsInRole("ChemUser"))
-                       {
+                        @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
+                        {
                         <td>
                             <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.ChemID" class="btn btn-info">
                                 <i class="glyphicon glyphicon-pencil"></i>  Edit

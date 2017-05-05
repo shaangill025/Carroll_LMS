@@ -34,7 +34,7 @@ namespace LMS4Carroll.Controllers
             //_logger = logger;
         }
 
-        //
+       
         // GET: /Manage/Index
         [HttpGet]
         public async Task<IActionResult> Index(ManageMessageId? message = null)
@@ -64,7 +64,6 @@ namespace LMS4Carroll.Controllers
             return View(model);
         }
 
-        //
         // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -84,14 +83,12 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
-        //
         // GET: /Manage/AddPhoneNumber
         public IActionResult AddPhoneNumber()
         {
             return View();
         }
 
-        //
         // POST: /Manage/AddPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -128,7 +125,6 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(Index), "Manage");
         }
 
-        //
         // POST: /Manage/DisableTwoFactorAuthentication
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -145,7 +141,7 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(Index), "Manage");
         }
 
-        //
+       
         // GET: /Manage/VerifyPhoneNumber
         [HttpGet]
         public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
@@ -160,7 +156,6 @@ namespace LMS4Carroll.Controllers
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
 
-        //
         // POST: /Manage/VerifyPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -185,7 +180,6 @@ namespace LMS4Carroll.Controllers
             return View(model);
         }
 
-        //
         // POST: /Manage/RemovePhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -204,7 +198,6 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
-        //
         // GET: /Manage/ChangePassword
         [HttpGet]
         public IActionResult ChangePassword()
@@ -212,7 +205,6 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
-        //
         // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -238,7 +230,6 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
-        //
         // GET: /Manage/SetPassword
         [HttpGet]
         public IActionResult SetPassword()
@@ -246,7 +237,6 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
-        //
         // POST: /Manage/SetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -297,7 +287,6 @@ namespace LMS4Carroll.Controllers
             });
         }
 
-        //
         // POST: /Manage/LinkLogin
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -310,7 +299,6 @@ namespace LMS4Carroll.Controllers
             return Challenge(properties, provider);
         }
 
-        //
         // GET: /Manage/LinkLoginCallback
         [Authorize(Roles = "Admin")]
         [HttpGet]

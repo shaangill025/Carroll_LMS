@@ -11,7 +11,7 @@
         <form asp-action="Edit">
             <div class="form-horizontal">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="BarcodeID" />
+                <input type="hidden" asp-for="ChemInventoryId" />
                 <div class="form-group">
                     <label asp-for="ChemID" class="col-md-2 control-label required">Chemical</label>
                     <div class="col-md-10">
@@ -35,6 +35,18 @@
                     <label asp-for="OrderID" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
                         <select asp-for="OrderID" name="OrderInput" class="form-control" asp-items="ViewBag.OrderID" ></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CAT" class="col-md-2 control-label required"></label>
+                    <div class="col-md-10">
+                        <input asp-for="CAT" name="Cat" class="form-control"></input>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LOT" class="col-md-2 control-label required"></label>
+                    <div class="col-md-10">
+                        <input asp-for="LOT" name="Lot" class="form-control" />
                     </div>
                 </div>
                 <div class="form-group">

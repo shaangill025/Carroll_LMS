@@ -14,9 +14,14 @@ using LMS4Carroll.Services;
 using NLog;
 using NLog.Fluent;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
+    /// <summary>
+    /// Account Controller handle function like login, logout, register, change or reset password, etc.
+    /// This is made possible beause of the close integration of Identity middleware.
+    /// </summary>
     [Authorize]
     [ServiceFilter(typeof(LogFilter))]
     public class AccountController : Controller
@@ -24,41 +29,48 @@ namespace LMS4Carroll.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private IConfiguration configuration;
 
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
-        //private readonly NLog.ILogger _logger;
-
-        //private Serilog.ILogger _logger;
+        ///<Nlog>
+        ///Nlog extension was initially implemented though it is incompatible with .net core, a custom logging solution had to replace it
+        ///private readonly NLog.ILogger _logger;
+        ///private Serilog.ILogger _logger;
+        ///</Nlog>
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender)
+            IConfiguration config,
+            IEmailSender emailSender, //Services implemented using smtp transfer
+            ISmsSender smsSender) //No sms services have been implemented
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            this.configuration = config;
             _emailSender = emailSender;
             _smsSender = smsSender;
-            //_logger = LogManager.GetLogger("databaseLogger"); 
         }
 
-        //
+        
         // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
-            //_logger.Info("Attempted login - ActionController");
-            //_logger.ForContext("User", "test").Information("Data Added Successfully");
+            ///<logger>
+            ///Were inteneded to be used with Nlog or Serilog
+            ///_logger.Info("Attempted login - ActionController");
+            ///_logger.ForContext("User", "test").Information("Data Added Successfully");
+            ///</logger>
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
-        //
+        
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -82,7 +94,7 @@ namespace LMS4Carroll.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    //_logger.LogInformation(1, "User logged in.");
+                    //Custom Logging
                     sp_Logging("1-Info", "Login", "User Logged in", "Success", model.Email);
                     return RedirectToLocal(returnUrl);
                 }
@@ -106,17 +118,23 @@ namespace LMS4Carroll.Controllers
             return View(model);
         }
 
-        //
         // GET: /Account/Register
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData["Year"] = new SelectList(new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Senior", Value = "Senior"},
+                                new SelectListItem { Text = "Junior", Value = "Junior"},
+                                new SelectListItem { Text = "Sophomore", Value = "Sophomore"},
+                                new SelectListItem { Text = "Freshman", Value = "Freshman"},
+                                new SelectListItem { Text = "N/A", Value = "N/A"},
+                            }, "Value", "Text");
             return View();
         }
 
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -124,13 +142,21 @@ namespace LMS4Carroll.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData["Year"] = new SelectList(new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Senior", Value = "Senior"},
+                                new SelectListItem { Text = "Junior", Value = "Junior"},
+                                new SelectListItem { Text = "Sophomore", Value = "Sophomore"},
+                                new SelectListItem { Text = "Freshman", Value = "Freshman"},
+                                new SelectListItem { Text = "N/A", Value = "N/A"},
+                            }, "Value", "Text", model.Carrollyear);
             if (ModelState.IsValid)
             {
+                //Using identity middleware and ViewModel to post values from model
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.Firstname, LastName = model.Lastname, CarrollYear = model.Carrollyear, RoleName = "Student" };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
@@ -141,29 +167,30 @@ namespace LMS4Carroll.Controllers
                        "\n Name: " + user.FirstName + " " + user.LastName);
                     // Comment out following line to prevent a new user automatically logged on.
                     // await _signInManager.SignInAsync(user, isPersistent: false);
-                    await _userManager.AddToRoleAsync(user,"Student");
+                    await _userManager.AddToRoleAsync(user, "Student");
                     //_logger.LogInformation(3, "User created a new account with password.");
                     return View("CheckEmail");
                 }
                 AddErrors(result);
             }
-
+           
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
-        //
+        
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
+            //Custom Loggin
             sp_Logging("1-Info", "Logoff", "User Logged out", "Success");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-        //
+        
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -176,7 +203,7 @@ namespace LMS4Carroll.Controllers
             return Challenge(properties, provider);
         }
 
-        //
+        
         // GET: /Account/ExternalLoginCallback
         [HttpGet]
         [AllowAnonymous]
@@ -270,7 +297,7 @@ namespace LMS4Carroll.Controllers
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
-        //
+       
         // GET: /Account/ForgotPassword
         [HttpGet]
         [AllowAnonymous]
@@ -279,7 +306,7 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
-        //
+        
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -291,11 +318,9 @@ namespace LMS4Carroll.Controllers
                 var user = await _userManager.FindByNameAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
@@ -309,7 +334,7 @@ namespace LMS4Carroll.Controllers
             return View(model);
         }
 
-        //
+        
         // GET: /Account/ForgotPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
@@ -318,7 +343,7 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
-        //
+        
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
@@ -327,7 +352,7 @@ namespace LMS4Carroll.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
+        
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -347,14 +372,13 @@ namespace LMS4Carroll.Controllers
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
-                sp_Logging("2-Change", "Reset Password", "User Reset Password", "Success");
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
             AddErrors(result);
             return View();
         }
 
-        //
+        
         // GET: /Account/ResetPasswordConfirmation
         [HttpGet]
         [AllowAnonymous]
@@ -363,7 +387,7 @@ namespace LMS4Carroll.Controllers
             return View();
         }
 
-        //
+        
         // GET: /Account/SendCode
         [HttpGet]
         [AllowAnonymous]
@@ -379,7 +403,7 @@ namespace LMS4Carroll.Controllers
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
+        
         // POST: /Account/SendCode
         [HttpPost]
         [AllowAnonymous]
@@ -417,7 +441,7 @@ namespace LMS4Carroll.Controllers
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
-        //
+      
         // GET: /Account/VerifyCode
         [HttpGet]
         [AllowAnonymous]
@@ -432,7 +456,6 @@ namespace LMS4Carroll.Controllers
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -444,7 +467,6 @@ namespace LMS4Carroll.Controllers
                 return View(model);
             }
 
-            // The following code protects for brute force attacks against the two factor codes.
             // If a user enters incorrect codes for a specified amount of time then the user account
             // will be locked out for a specified amount of time.
             var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser);
@@ -498,13 +520,17 @@ namespace LMS4Carroll.Controllers
 
         #endregion
 
+        //Custom logging Method - Writing to DB
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //DateTime updated = logged.Add(new TimeSpan(-5, 0, 0));
+            //logged.AddHours(-5);
             string site = "Account";
             string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
@@ -523,13 +549,16 @@ namespace LMS4Carroll.Controllers
                 con.Close();
             }
         }
-
+        
+        //sp_loggin overloading method
         private void sp_Logging(string level, string logger, string message, string exception, string email)
-        { 
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+        {
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
             string user = email;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
             string site = "Account";
             string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))

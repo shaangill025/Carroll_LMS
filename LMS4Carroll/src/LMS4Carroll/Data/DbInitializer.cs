@@ -15,9 +15,12 @@ namespace LMS4Carroll.Data
            
             try
             {
+                //Incement and seed has been set within datatable itself by dropping and re-creating the table
+                /*
                 context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('ChemicalEquipments', RESEED, 2000);");
                 context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('BioEquipments', RESEED, 1000);");
                 context.Database.ExecuteSqlCommand("DBCC CHECKIDENT('ChemInventory', RESEED, 10000);");
+                */
             }
             catch (SqlException ex)
             {

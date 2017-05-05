@@ -27,6 +27,15 @@ namespace LMS4Carroll.Models
         [Display(Name = "Equipment Type")]
         public string Type { get; set; }
 
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "CAT Number")]
+        public string CAT { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Lot #")]
+        public string LOT { get; set; }
+
+
         [StringLength(50)]
         [Display(Name = "S/N")]
         public string SerialNumber { get; set; }

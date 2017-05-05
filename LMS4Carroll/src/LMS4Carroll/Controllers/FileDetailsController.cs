@@ -12,22 +12,26 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
     public class FileDetailsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public FileDetailsController(ApplicationDbContext context)
+        public FileDetailsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: FileDetails
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.FileDetails.Include(f => f.Order);
+            sp_Logging("1-Info", "View", "Viewed list of invoices", "Success");
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -40,18 +44,17 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: FileDetails/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
+        //[Bind("FileDetailID,Content,ContentType,FileName,FileType,OrderID")] FileDetail fileDetail
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IFormFile file, string contenttype, string filename, string filetype, int orderid)
         {
-            //,[Bind("FileDetailID,Content,ContentType,FileName,FileType,OrderID")] FileDetail fileDetail
             //FileDetail fileDetail = new FileDetail(files, contenttype, filename, filetype, orderid);
             //List<IFormFile> files, string contenttype, string filename, string filetype, int  orderid
             byte[] fileBytes = null;
-
+            //opening filestream and them using MemoryStream to get an array of bytes
             if (file.Length > 0)
                 {
                     using (var fileStream = file.OpenReadStream())
@@ -74,7 +77,7 @@ namespace LMS4Carroll.Controllers
             {
                 _context.Add(fileDetail);
                 await _context.SaveChangesAsync();
-                sp_Logging("2-Change", "Create", "User uploaded a File where Filename=" + filename, "Success");
+                sp_Logging("2-Change", "Create", "User uploaded a File where Filename=" + filename + " and Order# is " + orderid, "Success");
                 return RedirectToAction("Index");
             }
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", fileDetail.OrderID);
@@ -125,15 +128,20 @@ namespace LMS4Carroll.Controllers
             return _context.FileDetails.Any(e => e.FileDetailID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "FileDB";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "FileDetails";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

@@ -17,7 +17,7 @@
                 </a>
             }
         </div><br />
-        <form asp-controller="Cages" asp-action="Index">
+        <form asp-controller="Animals" asp-action="Index" method="get">
             <div class="form-actions no-color">
                 <p>
                     <input type="text" name="CageString" value="@ViewData["currentFilter"]" />
@@ -49,6 +49,12 @@
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Gender)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CAT)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LOT)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Species)
@@ -88,6 +94,12 @@
                             @Html.DisplayFor(modelItem => item.Gender)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.CAT)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LOT)
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.Species)
                         </td>
                         @if (User.IsInRole("Admin") || User.IsInRole("AnimalUser"))
@@ -99,7 +111,7 @@
                                 <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.AnimalID" class="btn btn-danger">
                                     <i class="glyphicon glyphicon-trash"></i>  Delete
                                 </a>
-                                <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.AnimalID" class="btn btn-info">
+                                <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.AnimalID" class="btn btn-info loc3">
                                     <i class="glyphicon glyphicon-search"></i>  Details
                                 </a>
                             </td>

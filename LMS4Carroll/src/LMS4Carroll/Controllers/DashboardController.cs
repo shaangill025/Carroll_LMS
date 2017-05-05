@@ -9,24 +9,60 @@ using System.Data.SqlClient;
 using System.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
+
         //private SearchViewModel searchVM;
-        public DashboardController(ApplicationDbContext context)
+        public DashboardController(ApplicationDbContext context, IConfiguration config)
         {
             _context = context;
+            this.configuration = config;
             //searchVM = new SearchViewModel();
         }
 
+        //Custom Loggin Solution
+        private void sp_Logging(string level, string logger, string message, string exception)
+        {
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
+            string user = User.Identity.Name;
+            string app = "Carroll LMS";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "Dashboard";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@User", user);
+                cmd.Parameters.AddWithValue("@Application", app);
+                cmd.Parameters.AddWithValue("@Logged", logged);
+                cmd.Parameters.AddWithValue("@Level", level);
+                cmd.Parameters.AddWithValue("@Message", message);
+                cmd.Parameters.AddWithValue("@Logger", logger);
+                cmd.Parameters.AddWithValue("@Callsite", site);
+                cmd.Parameters.AddWithValue("@Exception", exception);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
         public IActionResult Index()
         {
+            sp_Logging("1-Info", "View", "Viewed Dashboard", "Success");
             return View();
         }
 
+        // Redundant feature : Has not been implemented, left for future optimization.
         // GET: Dashboard/Search
         public IActionResult Search()
         {
@@ -40,6 +76,8 @@ namespace LMS4Carroll.Controllers
         {
             ViewData["Search"] = searchstring;
             ViewData["Entity"] = entitystring;
+            sp_Logging("1-Info", "Search", "Used Dashboard's non-functional search feature", "Success");
+
             switch (entitystring)
             {
                 case "ChemEqpmt":

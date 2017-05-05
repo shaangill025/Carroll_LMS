@@ -12,10 +12,10 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Log ID")]
-        public int LogID { get; set; }
+        public int ChemLogId { get; set; }
    
         [ForeignKey("ChemInventory")]
-        public int BarcodeID { get; set; }
+        public int? ChemInventoryId { get; set; }
         public virtual ChemInventory ChemInventory { get; set; }
 
         public float QtyUsed { get; set; }

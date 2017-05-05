@@ -9,6 +9,7 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -16,10 +17,12 @@ namespace LMS4Carroll.Controllers
     public class ChemicalsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public ChemicalsController(ApplicationDbContext context)
+        public ChemicalsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: Chemicals
@@ -28,8 +31,9 @@ namespace LMS4Carroll.Controllers
             ViewData["CurrentFilter"] = chemstring;
             sp_Logging("1-Info", "View", "Successfuly viewed Chemicals list", "Success");
             var chemicals = from m in _context.Chemical
-                             select m;
+                                select m;
 
+            //Search Feature
             if (!String.IsNullOrEmpty(chemstring))
             {
                 int forID;
@@ -52,7 +56,6 @@ namespace LMS4Carroll.Controllers
                 }
             }
 
-            // var applicationDbContext = _context.bioicalEquipments.Include(c => c.Location).Include(c => c.Order);
             return View(await chemicals.OrderByDescending(s => s.ChemID).ToListAsync());
             //return View(await _context.Chemical.ToListAsync());
         }
@@ -81,17 +84,17 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Chemicals/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding of properties
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State")] Chemical chemical)
         {
             if (ModelState.IsValid)
             {
+                chemical.CAT = "N/A";
                 _context.Add(chemical);
                 await _context.SaveChangesAsync();
-                sp_Logging("2-Change", "Create", "User created a chemical", "Success");
+                sp_Logging("2-Change", "Create", "User created a chemical where formula is " + chemical.FormulaName, "Success");
                 return RedirectToAction("Index");
             }
             return View(chemical);
@@ -114,8 +117,7 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Chemicals/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding of properties
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ChemID,CAS,CAT,Formula,FormulaName,FormulaWeight,Hazard,SDS,State")] Chemical chemical)
@@ -176,15 +178,20 @@ namespace LMS4Carroll.Controllers
             return _context.Chemical.Any(e => e.ChemID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Chemicals";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "Chemical";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -201,5 +208,6 @@ namespace LMS4Carroll.Controllers
                 con.Close();
             }
         }
+
     }
 }

@@ -13,7 +13,7 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Barcode")]
-        public int BarcodeID { get; set; }
+        public int? ChemInventoryId { get; set; }
 
         [ForeignKey("Order")]
         public int? OrderID { get; set; }
@@ -34,6 +34,14 @@ namespace LMS4Carroll.Models
         [StringLength(50)]
         [Display(Name = "Department")]
         public string Department { get; set; }
+
+        [StringLength(50, MinimumLength = 3)]
+        [Display(Name = "CAT Number")]
+        public string CAT { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Lot #")]
+        public string LOT { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Units")]

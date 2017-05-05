@@ -11,12 +11,12 @@
         <form asp-action="Edit">
             <div class="form-horizontal">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="LogID" />
+                <input type="hidden" asp-for="ChemLogId" />
                 <div class="form-group">
-                    <label asp-for="BarcodeID" class="col-md-2 control-label required"></label>
+                    <label asp-for="ChemInventoryId" class="col-md-2 control-label required"></label>
                     <div class="col-md-10">
-                        <input asp-for="BarcodeID" name="BarcodeInput" class="form-control" asp-items="ViewBag.BarcodeID" value="@ViewData["Barcode"]" />
-                        <span asp-validation-for="BarcodeID" class="text-danger" />
+                        <input asp-for="ChemInventoryId" name="BarcodeInput" class="form-control" value="@ViewData["Barcode"]" />
+                        <span asp-validation-for="ChemInventoryId" class="text-danger" />
                     </div>
                 </div>
                 <div class="form-group">

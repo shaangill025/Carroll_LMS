@@ -16,10 +16,10 @@
                 </a>
             }
         </div><br />
-            <form asp-controller="ChemInventories" asp-action="Index">
+            <form asp-controller="ChemInventories" asp-action="Index" method="get" >
                 <div class="form-actions no-color">
                     <p>
-                        <input type="text" name="CheminventoryString" value="@ViewData["currentFilter"]" />
+                        <input type="text" placeholder="Barcode Here" name="CheminventoryString" value="@ViewData["currentFilter"]" />
                         <input type="submit" value="Search" class="btn btn-default" />  
                         <a class="btn btn-default" asp-action="Index">Back to Full List</a>
                     </p>
@@ -29,10 +29,10 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.BarcodeID)
+                            @Html.DisplayNameFor(model => model.ChemInventoryId)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Chemical.CAT)
+                            @Html.DisplayNameFor(model => model.Order.PO)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Chemical.CAS)
@@ -45,6 +45,12 @@
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Location.StorageCode)
+                        </th>
+                        <th>
+                            CAT#
+                        </th>
+                        <th>
+                            LOT#
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Chemical.SDS)
@@ -74,10 +80,10 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => item.BarcodeID)
+                                @Html.DisplayFor(modelItem => item.ChemInventoryId)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Chemical.CAT)
+                                @Html.DisplayFor(modelItem => item.Order.PO)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Chemical.CAS)
@@ -86,10 +92,20 @@
                                 @Html.DisplayFor(modelItem => item.Chemical.FormulaName)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.OrderID)
+                                @{string orderLink = "http://lms4carroll.azurewebsites.net/Orders/Details/";}
+                                @{var orderint = item.OrderID;}
+                                @{string link = orderLink + orderint;}
+                                
+                                <a target="_blank" href="@link">@Html.DisplayFor(modelItem => item.OrderID)</a>
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Location.StorageCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CAT)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LOT)
                             </td>
                             <td>
                                 <a target="_blank" href="@Html.DisplayFor(modelItem => item.Chemical.SDS)">SDS</a>
@@ -109,13 +125,13 @@
                             @if (User.IsInRole("Admin") || User.IsInRole("ChemUser") || User.IsInRole("BiologyUser"))
                             {
                                 <td>
-                                    <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.BarcodeID" class="btn btn-info">
+                                    <a id="addEditApplicationRoleModal" asp-action="Edit" asp-route-id="@item.ChemInventoryId" class="btn btn-info">
                                         <i class="glyphicon glyphicon-pencil"></i>  Edit
                                     </a>
-                                    <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.BarcodeID" class="btn btn-info">
+                                    <a id="addEditApplicationRoleModal" asp-action="Details" asp-route-id="@item.ChemInventoryId" class="btn btn-info loc2">
                                         <i class="glyphicon glyphicon-search"></i>  Details
                                     </a>
-                                    <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.BarcodeID" class="btn btn-danger loc3">
+                                    <a id="deleteApplicationRoleModal" asp-action="Delete" asp-route-id="@item.ChemInventoryId" class="btn btn-danger loc3">
                                         <i class="glyphicon glyphicon-trash"></i>  Delete
                                     </a>                 
                                 </td>

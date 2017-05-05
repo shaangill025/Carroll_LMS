@@ -11,17 +11,20 @@ using System.Data.SqlTypes;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
-    [Authorize(Roles = "Admin,Handler,BiologyUser,ChemUser")]
+    [Authorize(Roles = "Admin,Handler,BiologyUser,ChemUser,AnimalUser")]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;   
         }
 
         // GET: Orders
@@ -29,11 +32,13 @@ namespace LMS4Carroll.Controllers
         {
             ViewData["CurrentFilter"] = orderString;
             sp_Logging("1-Info", "View", "Successfuly viewed Orders list", "Success");
-            var orders = from m in _context.Orders.Include(c => c.Vendor)
-                             select m;
+
 
             if (!String.IsNullOrEmpty(orderString))
             {
+                var orders = from m in _context.Orders.Include(c => c.Vendor)
+                             select m;
+
                 /*SqlDateTime dateCompare = Convert.ToSqlDateTime(orderString);
                 CultureInfo myCItrad = new CultureInfo("bg-BG");
                 DateTime parsedDate = DateTime.ParseExact(
@@ -41,9 +46,11 @@ namespace LMS4Carroll.Controllers
                    "dd/MM/yyyy hh:mm:ss",
                    myCItrad);
                 */
+                //Search Feature
                 DateTime dt;
                 string dateTime;
-                if (!orderString.Contains(":")) {
+                if (!orderString.Contains(":"))
+                {
                     dateTime = orderString + " 00:00:00.0000000";
                 }
                 else
@@ -68,17 +75,19 @@ namespace LMS4Carroll.Controllers
                 {
                     orders = orders.Where(p => p.Status.Contains(orderString)
                                 || p.OrderID.Equals(forID)
-                                || p.CAT.Contains(orderString)
                                 || p.PO.Contains(orderString)
                                 || p.Invoice.Contains(orderString)
                                 || p.Status.Contains(orderString)
-                                || p.Type.Contains(orderString)
                                 || p.Vendor.Name.Contains(orderString));
                     return View(await orders.OrderByDescending(s => s.OrderID).ToListAsync());
                 }
             }
-            //var applicationDbContext = _context.Orders.Include(o => o.Vendor);
-            return View(await orders.OrderByDescending(s => s.OrderID).ToListAsync());
+            else
+            {
+                var orders = from m in _context.Orders.Include(c => c.Vendor).Take(50)
+                             select m;
+                return View(await orders.OrderByDescending(s => s.OrderID).ToListAsync());
+            }
         }
 
         // GET: Orders/Details/5
@@ -106,11 +115,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding of properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,Invoice,PO")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderID,Orderdate,Recievedate,Status,VendorID,Invoice,PO")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -141,11 +149,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding of properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,Type,VendorID,CAT,Invoice,PO")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Orderdate,Recievedate,Status,VendorID,Invoice,PO")] Order order)
         {
             if (id != order.OrderID)
             {
@@ -211,14 +218,20 @@ namespace LMS4Carroll.Controllers
             return _context.Orders.Any(e => e.OrderID == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
             string site = "Orders";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

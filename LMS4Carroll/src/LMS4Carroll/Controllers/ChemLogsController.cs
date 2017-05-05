@@ -9,6 +9,7 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -16,10 +17,12 @@ namespace LMS4Carroll.Controllers
     public class ChemLogsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public ChemLogsController(ApplicationDbContext context)
+        public ChemLogsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: ChemLogs
@@ -28,16 +31,19 @@ namespace LMS4Carroll.Controllers
             //var applicationDbContext = _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course);
             ViewData["CurrentFilter"] = chemlogstring;
             sp_Logging("1-Info", "View", "Successfuly viewed Chemical Log list", "Success");
-            var logs = from m in _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course)
-                       select m;
 
+
+            //Search Feature
             if (!String.IsNullOrEmpty(chemlogstring))
             {
+                var logs = from m in _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course)
+                           select m;
+
                 int forID;
                 if (Int32.TryParse(chemlogstring, out forID))
                 {
-                    logs = logs.Where(s => s.LogID.Equals(forID));
-                    return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+                    logs = logs.Where(s => s.ChemLogId.Equals(forID));
+                    return View(await logs.OrderByDescending(s => s.ChemLogId).ToListAsync());
                 }
                 else
                 {
@@ -49,7 +55,7 @@ namespace LMS4Carroll.Controllers
                                        || s.Course.Location.Name.Contains(chemlogstring)
                                        || s.Course.Location.Room.Contains(chemlogstring)
                                        || s.Course.Location.Type.Contains(chemlogstring)
-                                       || s.ChemInventory.BarcodeID.Equals(forID)
+                                       || s.ChemInventory.ChemInventoryId.Equals(forID)
                                        || s.ChemInventory.ChemID.Equals(forID)
                                        || s.ChemInventory.Chemical.CAS.Contains(chemlogstring)
                                        || s.ChemInventory.Chemical.Formula.Contains(chemlogstring)
@@ -59,18 +65,21 @@ namespace LMS4Carroll.Controllers
                                        || s.ChemInventory.Location.Name.Contains(chemlogstring)
                                        || s.ChemInventory.Location.Room.Contains(chemlogstring)
                                        || s.ChemInventory.Location.NormalizedStr.Contains(chemlogstring)
-                                       || s.ChemInventory.BarcodeID.Equals(forID)
+                                       || s.ChemInventory.ChemInventoryId.Equals(forID)
                                        || s.ChemInventory.Order.Vendor.Name.Contains(chemlogstring)
                                        || s.ChemInventory.Order.Invoice.Contains(chemlogstring)
                                        || s.ChemInventory.Order.PO.Contains(chemlogstring)
-                                       || s.ChemInventory.Order.CAT.Contains(chemlogstring));
-                    return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+                                       || s.ChemInventory.CAT.Contains(chemlogstring));
+                    return View(await logs.OrderByDescending(s => s.ChemLogId).ToListAsync());
 
                 }
             }
-
-            // var applicationDbContext = _context.bioicalEquipments.Include(c => c.Location).Include(c => c.Order);
-            return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+            else
+            {
+                var logs = from m in _context.ChemLog.Include(c => c.ChemInventory).Include(c => c.Course).Take(50)
+                           select m;
+                return View(await logs.OrderByDescending(s => s.ChemLogId).ToListAsync());
+            }
             //return View(await applicationDbContext.ToListAsync());
         }
 
@@ -82,7 +91,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.ChemLogId == id);
             if (chemLog == null)
             {
                 return NotFound();
@@ -94,32 +103,30 @@ namespace LMS4Carroll.Controllers
         // GET: ChemLogs/Create
         public IActionResult Create()
         {
-            ViewData["BarcodeID"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID");
             ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr");
             return View();
         }
 
         // POST: ChemLogs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int barcodeinput, int courseinput, float qtyusedinput)
         {
             ViewData["Barcode"] = barcodeinput;
-            ViewData["Barcode"] = courseinput;
+            ViewData["Course"] = courseinput;
             ViewData["Qty"] = qtyusedinput;
-            if (_context.ChemInventory.Count(M => M.BarcodeID == barcodeinput) >= 1) {
+            if (_context.ChemInventory.Count(M => M.ChemInventoryId == barcodeinput) >= 1) {
                 ChemLog chemLog = new ChemLog();
-                ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.BarcodeID == barcodeinput);
+                ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.ChemInventoryId == barcodeinput);
                 float tempValue = temp.QtyLeft;
                 temp.QtyLeft = tempValue - qtyusedinput;
                 _context.Entry<ChemInventory>(temp).State = EntityState.Modified;
                 _context.SaveChanges();
-                //chemLog.DatetimeCreated = DateTime.UtcNow;
+                //chemLog.DatetimeCreated = DateTime.Now;
                 if (ModelState.IsValid)
                 {
-                    chemLog.BarcodeID = barcodeinput;
+                    chemLog.ChemInventoryId = barcodeinput;
                     chemLog.CourseID = courseinput;
                     chemLog.QtyUsed = qtyusedinput;
                     _context.Add(chemLog);
@@ -127,7 +134,6 @@ namespace LMS4Carroll.Controllers
                     sp_Logging("2-Change", "Create", "User created a Log entry where Barcode=" + barcodeinput, "Success");
                     return RedirectToAction("Index");
                 }
-                ViewData["BarcodeID"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
                 ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
                 return View(chemLog);
             }
@@ -146,37 +152,37 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.ChemLogId == id);
             if (chemLog == null)
             {
                 return NotFound();
             }
-            ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
+            ViewData["Barcode"] = chemLog.ChemInventoryId;
+            ViewData["Qty"] = chemLog.QtyUsed;
             ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
             return View(chemLog);
         }
 
         // POST: ChemLogs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Overposting attack vulnerability [Next iteration need to bind]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int barcodeinput, int courseinput, float qtyusedinput)
         {
-       
-            if (_context.ChemInventory.Count(M => M.BarcodeID == barcodeinput) >= 1)
+            if (_context.ChemInventory.Count(M => M.ChemInventoryId == barcodeinput) >= 1)
             {
-                ChemLog chemLog = await _context.ChemLog.FirstAsync(m => m.LogID == id);
-                ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.BarcodeID == barcodeinput);
+                ChemLog chemLog = await _context.ChemLog.FirstAsync(m => m.ChemLogId == id);
+                ChemInventory temp = _context.ChemInventory.FirstOrDefault(s => s.ChemInventoryId == barcodeinput);
                 float tempValue = temp.QtyLeft;
-                temp.QtyLeft = tempValue - qtyusedinput;
+                float used = chemLog.QtyUsed;
+                temp.QtyLeft = tempValue + used - qtyusedinput;
                 _context.Entry<ChemInventory>(temp).State = EntityState.Modified;
                 _context.SaveChanges();
-                chemLog.BarcodeID = barcodeinput;
+                chemLog.ChemInventoryId = barcodeinput;
                 chemLog.CourseID = courseinput;
                 chemLog.QtyUsed = qtyusedinput;
 
-                if (id != chemLog.LogID)
+                if (id != chemLog.ChemLogId)
                 {
                     return NotFound();
                 }
@@ -192,7 +198,7 @@ namespace LMS4Carroll.Controllers
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!ChemLogExists(chemLog.LogID))
+                        if (!ChemLogExists(chemLog.ChemLogId))
                         {
                             return NotFound();
                         }
@@ -203,7 +209,7 @@ namespace LMS4Carroll.Controllers
                     }
                     return RedirectToAction("Index");
                 }
-                ViewData["Barcode"] = new SelectList(_context.ChemInventory, "BarcodeID", "BarcodeID", chemLog.BarcodeID);
+                ViewData["Barcode"] = new SelectList(_context.ChemInventory, "ChemInventoryId", "ChemInventoryId", chemLog.ChemInventoryId);
                 ViewData["CourseID"] = new SelectList(_context.Course, "CourseID", "NormalizedStr", chemLog.CourseID);
                 return View(chemLog);
             }
@@ -221,7 +227,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.ChemLogId == id);
             if (chemLog == null)
             {
                 return NotFound();
@@ -235,10 +241,10 @@ namespace LMS4Carroll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var chemLog = await _context.ChemLog.SingleOrDefaultAsync(m => m.ChemLogId == id);
             var used = chemLog.QtyUsed;
-            var barcode = chemLog.BarcodeID;
-            var chemInv = _context.ChemInventory.First(m => m.BarcodeID == barcode);
+            var barcode = chemLog.ChemInventoryId;
+            var chemInv = _context.ChemInventory.First(m => m.ChemInventoryId == barcode);
             var tempQty = chemInv.QtyLeft;
             chemInv.QtyLeft = tempQty + used;
             _context.Update(chemInv);
@@ -250,18 +256,23 @@ namespace LMS4Carroll.Controllers
 
         private bool ChemLogExists(int id)
         {
-            return _context.ChemLog.Any(e => e.LogID == id);
+            return _context.ChemLog.Any(e => e.ChemLogId == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Chemical Log";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "ChemLogs";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);

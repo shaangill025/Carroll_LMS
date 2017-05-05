@@ -12,7 +12,7 @@ namespace LMS4Carroll.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Log ID")]
-        public int LogID { get; set; }
+        public int CageLogId { get; set; }
 
         [ForeignKey("Animal")]
         public int AnimalID { get; set; }

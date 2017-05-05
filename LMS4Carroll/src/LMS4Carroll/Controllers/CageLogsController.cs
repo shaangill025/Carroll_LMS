@@ -9,6 +9,7 @@ using LMS4Carroll.Data;
 using LMS4Carroll.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace LMS4Carroll.Controllers
 {
@@ -16,10 +17,12 @@ namespace LMS4Carroll.Controllers
     public class CageLogsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IConfiguration configuration;
 
-        public CageLogsController(ApplicationDbContext context)
+        public CageLogsController(ApplicationDbContext context, IConfiguration config)
         {
-            _context = context;    
+            _context = context;
+            this.configuration = config;
         }
 
         // GET: CageLogs
@@ -29,16 +32,16 @@ namespace LMS4Carroll.Controllers
             ViewData["CurrentFilter"] = cagelogstring;
             sp_Logging("1-Info", "View", "Successfuly viewed Cage log list", "Success");
 
-            var logs = from m in _context.CageLog.Include(c => c.Animal)
-                       select m;
-
+            //Search Feature
             if (!String.IsNullOrEmpty(cagelogstring))
             {
+                var logs = from m in _context.CageLog.Include(c => c.Animal)
+                           select m;
                 int forID;
                 if (Int32.TryParse(cagelogstring, out forID))
                 {
-                    logs = logs.Where(s => s.LogID.Equals(forID));
-                    return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+                    logs = logs.Where(s => s.CageLogId.Equals(forID));
+                    return View(await logs.OrderByDescending(s => s.CageLogId).ToListAsync());
                 }
                 else
                 {
@@ -48,14 +51,19 @@ namespace LMS4Carroll.Controllers
                                        || s.Animal.Order.Invoice.Contains(cagelogstring)
                                        || s.Animal.Order.PO.Contains(cagelogstring)
                                        || s.Animal.Order.Vendor.Name.Contains(cagelogstring)
-                                       || s.Animal.Order.CAT.Contains(cagelogstring)
+                                       || s.Animal.CAT.Contains(cagelogstring)
                                        || s.Animal.Location.Name.Contains(cagelogstring)
                                        || s.Animal.Location.NormalizedStr.Contains(cagelogstring)
                                        || s.Animal.Location.Room.Contains(cagelogstring));
-                    return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+                    return View(await logs.OrderByDescending(s => s.CageLogId).ToListAsync());
                 }
             }
-            return View(await logs.OrderByDescending(s => s.LogID).ToListAsync());
+            else
+            {
+                var logs = from m in _context.CageLog.Include(c => c.Animal).Take(40)
+                           select m;
+                return View(await logs.OrderByDescending(s => s.CageLogId).ToListAsync());
+            }
         }
 
         // GET: CageLogs/Details/5
@@ -66,7 +74,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.CageLogId == id);
             if (cageLog == null)
             {
                 return NotFound();
@@ -83,11 +91,10 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: CageLogs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding of properties
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LogID,AnimalID,Clean,Food,FoodComments,Social,SocialComments,WashComments,Washed")] CageLog cageLog)
+        public async Task<IActionResult> Create([Bind("CageLogId,AnimalID,Clean,Food,FoodComments,Social,SocialComments,WashComments,Washed")] CageLog cageLog)
         {
             if (ModelState.IsValid)
             {
@@ -108,7 +115,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.CageLogId == id);
             if (cageLog == null)
             {
                 return NotFound();
@@ -118,13 +125,12 @@ namespace LMS4Carroll.Controllers
         }
 
         // POST: CageLogs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enabled binding properties 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LogID,AnimalID,Clean,DatetimeCreated,Food,FoodComments,Social,SocialComments,WashComments,Washed")] CageLog cageLog)
+        public async Task<IActionResult> Edit(int id, [Bind("CageLogId,AnimalID,Clean,Food,FoodComments,Social,SocialComments,WashComments,Washed")] CageLog cageLog)
         {
-            if (id != cageLog.LogID)
+            if (id != cageLog.CageLogId)
             {
                 return NotFound();
             }
@@ -140,7 +146,7 @@ namespace LMS4Carroll.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CageLogExists(cageLog.LogID))
+                    if (!CageLogExists(cageLog.CageLogId))
                     {
                         return NotFound();
                     }
@@ -163,7 +169,7 @@ namespace LMS4Carroll.Controllers
                 return NotFound();
             }
 
-            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.CageLogId == id);
             if (cageLog == null)
             {
                 return NotFound();
@@ -177,7 +183,7 @@ namespace LMS4Carroll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.LogID == id);
+            var cageLog = await _context.CageLog.SingleOrDefaultAsync(m => m.CageLogId == id);
             _context.CageLog.Remove(cageLog);
             await _context.SaveChangesAsync();
             sp_Logging("3-Remove", "Delete", "User removed a Cage Log entry where ID= " + id.ToString(), "Success");
@@ -186,18 +192,23 @@ namespace LMS4Carroll.Controllers
 
         private bool CageLogExists(int id)
         {
-            return _context.CageLog.Any(e => e.LogID == id);
+            return _context.CageLog.Any(e => e.CageLogId == id);
         }
 
+        //Custom Loggin Solution
         private void sp_Logging(string level, string logger, string message, string exception)
         {
-
-            string CS = "Server = cscsql2.carrollu.edu; Database = CarrollChemistry; User ID = CarrollChemistry; Password = Carroll2016;";
+            //Connection string from AppSettings.JSON
+            string CS = configuration.GetConnectionString("DefaultConnection");
+            //Using Identity middleware to get email address
             string user = User.Identity.Name;
             string app = "Carroll LMS";
-            DateTime logged = DateTime.Now;
-            string site = "Cage Log";
-            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite], [Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
+            //Subtract 5 hours as the timestamp is in GMT timezone
+            DateTime logged = DateTime.Now.AddHours(-5);
+            //logged.AddHours(-5);
+            string site = "CageLogs";
+            string query = "insert into dbo.Log([User], [Application], [Logged], [Level], [Message], [Logger], [CallSite]," +
+                "[Exception]) values(@User, @Application, @Logged, @Level, @Message,@Logger, @Callsite, @Exception)";
             using (SqlConnection con = new SqlConnection(CS))
             {
                 SqlCommand cmd = new SqlCommand(query, con);
