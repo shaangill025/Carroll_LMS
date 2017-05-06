@@ -31,7 +31,7 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><img id="logo" class="img-responsive"
      src="~/images/CarrollLogo.PNG"></a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse" id="topNavbar">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>  
                     @if (User.IsInRole("Admin"))
