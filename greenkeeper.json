@@ -1,0 +1,9 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "LMS4Carroll/src/LMS4Carroll/wwwroot/lib/angular/package.json"
+      ]
+    }
+  }
+}
